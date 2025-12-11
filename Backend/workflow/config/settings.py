@@ -38,7 +38,7 @@ CACHE_DIR = os.path.join(BASE_DIR, "caches")
 # IMPORTANT: En production, utiliser des variables d'environnement
 # Pour l'instant, valeurs fixées dans le code comme demandé
 
-LLAMA_API_KEY = "sk-2eb8532dc2f041dfb51840501facebd1"
+LLAMA_API_KEY = "sk"
 LLAMA_BASE_URL = "https://tokenfactory.esprit.tn/api"
 LLAMA_MODEL = "hosted_vllm/Llama-3.1-70B-Instruct"
 
