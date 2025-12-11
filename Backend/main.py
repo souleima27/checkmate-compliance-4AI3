@@ -4,7 +4,7 @@ import sys
 import asyncio
 import json
 from typing import List, Optional
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
@@ -29,7 +29,11 @@ app.add_middleware(
 
 UPLOAD_DIR = "uploads"
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "workflow", "output")
+CACHE_DIR = os.path.join(os.path.dirname(__file__), "workflow", "caches")
+METADATA_FILE = os.path.join(CACHE_DIR, "metadata.json")
+
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+os.makedirs(CACHE_DIR, exist_ok=True)
 
 # Serve uploaded files statically so frontend can access them
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
@@ -54,6 +58,20 @@ except Exception as e:
 @app.get("/")
 def health_check():
     return {"status": "ok", "message": "Compliance Backend is running (2 agents)"}
+
+@app.post("/api/save_metadata")
+async def save_metadata(request: Request):
+    """
+    Save questionnaire metadata into workflow/caches/metadata.json
+    """
+    try:
+        data = await request.json()
+        with open(METADATA_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+        print(f"💾 Metadata saved to {METADATA_FILE}")
+        return {"status": "success", "path": METADATA_FILE}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to save metadata: {e}")
 
 @app.post("/api/analyze")
 async def analyze_file(
@@ -83,6 +101,12 @@ async def analyze_file(
             try:
                 parsed_metadata = json.loads(metadata)
                 print(f"📝 Metadata received: {parsed_metadata}")
+
+                # Save metadata automatically to caches
+                with open(METADATA_FILE, "w", encoding="utf-8") as f:
+                    json.dump(parsed_metadata, f, indent=4, ensure_ascii=False)
+                print(f"💾 Metadata saved to {METADATA_FILE}")
+
             except json.JSONDecodeError as e:
                 print(f"⚠️ Failed to parse metadata JSON: {e}")
 

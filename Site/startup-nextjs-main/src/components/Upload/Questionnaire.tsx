@@ -24,20 +24,22 @@ function QuestionItem({ icon, question, value, onChange }: QuestionItemProps) {
                 <button
                     type="button"
                     onClick={() => onChange(true)}
-                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${value
+                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
+                        value
                             ? "bg-green-600 text-white shadow-md shadow-green-200 dark:shadow-green-900"
                             : "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
-                        }`}
+                    }`}
                 >
                     Oui
                 </button>
                 <button
                     type="button"
                     onClick={() => onChange(false)}
-                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${!value
+                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
+                        !value
                             ? "bg-red-500 text-white shadow-md shadow-red-200 dark:shadow-red-900"
                             : "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
-                        }`}
+                    }`}
                 >
                     Non
                 </button>
@@ -51,6 +53,23 @@ export default function Questionnaire() {
 
     const updateField = (field: string, value: boolean | string) => {
         setMetadata({ ...metadata, [field]: value });
+    };
+
+    // 🔹 Save metadata to backend
+    const saveMetadata = async () => {
+        try {
+            const response = await fetch("http://localhost:8000/api/save_metadata", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(metadata),
+            });
+            const result = await response.json();
+            console.log("✅ Metadata saved:", result);
+            alert("Metadata sauvegardé avec succès !");
+        } catch (error) {
+            console.error("❌ Error saving metadata:", error);
+            alert("Erreur lors de la sauvegarde du metadata.");
+        }
     };
 
     return (
@@ -112,6 +131,17 @@ export default function Questionnaire() {
                         value={metadata["Le document fait-il référence à un nouveau Produit"] || false}
                         onChange={(v) => updateField("Le document fait-il référence à un nouveau Produit", v)}
                     />
+                </div>
+
+                {/* Save button */}
+                <div className="mt-6 flex justify-end">
+                    <button
+                        type="button"
+                        onClick={saveMetadata}
+                        className="px-6 py-2 rounded-lg bg-green-600 text-white font-medium hover:bg-green-700 transition-all"
+                    >
+                        Sauvegarder
+                    </button>
                 </div>
             </div>
         </div>
