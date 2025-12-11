@@ -13,7 +13,7 @@ from openai import OpenAI
 # Import configuration
 import sys
 sys.path.append('.')
-from config.settings import *
+from workflow.config.settings import *
 
 
 class LlamaClient:

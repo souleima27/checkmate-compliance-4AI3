@@ -6,7 +6,18 @@ from typing import Optional
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from workflow.llm_client import LlamaClient
 
+
+llm = LlamaClient()
+
+def load_json(path):
+    if os.path.exists(path):
+        try:
+            return json.load(open(path, "r", encoding="utf-8"))
+        except:
+            return {}
+    return {}
 # Ensure 'workflow' directory is in PYTHONPATH so internal imports (like 'from config import ...') work
 sys.path.append(os.path.join(os.path.dirname(__file__), "workflow"))
 
@@ -164,6 +175,75 @@ async def analyze_file(
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         pass
+
+@app.get("/api/context")
+async def get_context():
+    return {
+        "ephemeral": {
+            "presentation": load_json(os.path.join(OUTPUT_DIR, "parsed_docs", "latest_presentation_parsed.json")),
+            "prospectus": load_json(os.path.join(OUTPUT_DIR, "parsed_docs", "latest_prospectus_parsed.json")),
+            "metadata": load_json(METADATA_FILE),
+        },
+        "persistent": {
+            "regles_contextuelles": load_json(os.path.join(CACHE_DIR, "regles_contextuelles.json")),
+            "regles_structurelles": load_json(os.path.join(CACHE_DIR, "regles_structurelles.json")),
+            "glossaires": load_json(os.path.join(CACHE_DIR, "glossaires.json")),
+            "funds": load_json(os.path.join(CACHE_DIR, "funds.json")),
+        }
+    }
+
+@app.post("/api/chat")
+async def chatbot_endpoint(request: Request):
+    data = await request.json()
+
+    question = data.get("question")
+    ephemeral = data.get("ephemeral", {})
+    persistent = data.get("persistent", {})
+
+    if not question:
+        raise HTTPException(status_code=400, detail="Missing question")
+
+    system_prompt = """
+Tu es un assistant expert en conformité réglementaire pour supports commerciaux (slides, documents marketing, prospectus).
+Tu DOIS utiliser :
+
+1. Le contexte temporaire (ephemeral)
+   - présentation analysée
+   - prospectus analysé
+   - metadata
+
+2. Le savoir permanent (persistent):
+   - règles structurelles
+   - règles contextuelles
+   - glossaire
+   - funds registration
+
+Tu dois répondre de manière concise, exacte, basée STRICTEMENT sur les données fournies.
+Ne jamais inventer.
+"""
+
+    user_prompt = f"""
+QUESTION UTILISATEUR:
+{question}
+
+CONTEXTE ÉPHÉMÈRE (analyse en cours):
+{json.dumps(ephemeral, ensure_ascii=False, indent=2)}
+
+BASE DE CONNAISSANCE PERMANENTE:
+{json.dumps(persistent, ensure_ascii=False, indent=2)}
+
+Réponds en français.
+"""
+
+    answer = llm.generate_response([
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_prompt}
+    ], max_tokens=500)
+
+    if not answer:
+        answer = "Je n'ai pas pu générer une réponse. Réessayez."
+
+    return {"answer": answer}
 
 if __name__ == "__main__":
     import uvicorn
