@@ -204,36 +204,44 @@ async def chatbot_endpoint(request: Request):
         raise HTTPException(status_code=400, detail="Missing question")
 
     system_prompt = """
-Tu es un assistant expert en conformité réglementaire pour supports commerciaux (slides, documents marketing, prospectus).
-Tu DOIS utiliser :
+    Tu es un assistant de conformité **STRICTEMENT RESTREINT AUX DONNÉES FOURNIES**.
 
-1. Le contexte temporaire (ephemeral)
-   - présentation analysée
-   - prospectus analysé
-   - metadata
+    🚫 Tu NE PEUX PAS inventer.
+    🚫 Tu NE PEUX PAS compléter avec des connaissances générales.
+    🚫 Tu NE PEUX PAS deviner.
+    🚫 Tu NE PEUX PAS utiliser d’informations externes ou implicites.
 
-2. Le savoir permanent (persistent):
-   - règles structurelles
-   - règles contextuelles
-   - glossaire
-   - funds registration
+    🎯 Tu ne dois répondre **QUE** si :
+    - l'information existe dans le contexte éphémère (présentation, prospectus, metadata)
+    OU
+    - dans le contexte permanent (règles, glossaire, funds)
 
-Tu dois répondre de manière concise, exacte, basée STRICTEMENT sur les données fournies.
-Ne jamais inventer.
-"""
+    ❗Si une information n’existe PAS dans les fichiers fournis :
+    ➡️ tu DOIS répondre exactement :
+    "Je ne dispose pas d'informations suffisantes dans les données fournies."
+
+    Tu es un assistant extrêmement prudent.
+    Chaque phrase que tu dis doit venir textuellement ou factuellement des fichiers fournis.
+    """
+
 
     user_prompt = f"""
-QUESTION UTILISATEUR:
-{question}
+    Voici la question utilisateur :
+    {question}
 
-CONTEXTE ÉPHÉMÈRE (analyse en cours):
-{json.dumps(ephemeral, ensure_ascii=False, indent=2)}
+    ⚠️ Rappel : tu es strictement limité aux données fournies. 
+    Si la réponse n'existe pas dans ces données → tu DOIS répondre :
+    "Je ne dispose pas d'informations suffisantes dans les données fournies."
 
-BASE DE CONNAISSANCE PERMANENTE:
-{json.dumps(persistent, ensure_ascii=False, indent=2)}
+    --- CONTEXTE ÉPHÉMÈRE ---
+    {json.dumps(ephemeral, ensure_ascii=False, indent=2)}
 
-Réponds en français.
-"""
+    --- CONTEXTE PERMANENT ---
+    {json.dumps(persistent, ensure_ascii=False, indent=2)}
+
+    Réponds en français.
+    """
+
 
     answer = llm.generate_response([
         {"role": "system", "content": system_prompt},
