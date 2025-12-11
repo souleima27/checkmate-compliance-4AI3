@@ -3,6 +3,7 @@ import Breadcrumb from "@/components/Common/Breadcrumb";
 import UploadMarketing from "@/components/Upload/UploadMarketing";
 import UploadProspectus from "@/components/Upload/UploadProspectus";
 import UploadActions from "@/components/Upload/UploadActions";
+import Questionnaire from "@/components/Upload/Questionnaire";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -24,8 +25,12 @@ export default function UploadPage() {
         <UploadProspectus />
       </div>
 
-      {/* Bouton d’analyse */}
+      {/* Questionnaire pré-analyse */}
+      <Questionnaire />
+
+      {/* Bouton d'analyse */}
       <UploadActions />
     </>
   );
 }
+

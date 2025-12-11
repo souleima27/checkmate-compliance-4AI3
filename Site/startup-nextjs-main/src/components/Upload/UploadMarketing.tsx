@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Upload, FileText } from "lucide-react";
+import { useUploadStore } from "@/stores/uploadStore";
 
 export default function UploadMarketing() {
-  const [file, setFile] = useState<File | null>(null);
+  const { marketingFile, setMarketingFile } = useUploadStore();
 
   return (
     <div className="border border-green-300 bg-green-50 rounded-xl p-6 shadow-sm hover:shadow transition">
@@ -20,13 +21,13 @@ export default function UploadMarketing() {
       <label className="cursor-pointer flex flex-col items-center justify-center border-2 border-dashed border-green-400 rounded-lg h-40 hover:bg-green-100 transition">
         <Upload className="text-green-600 mb-2" size={32} />
         <span className="font-medium">
-          {file ? file.name : "Déposer ou sélectionner un fichier"}
+          {marketingFile ? marketingFile.name : "Déposer ou sélectionner un fichier"}
         </span>
         <input
           type="file"
           accept=".pptx,.docx,.pdf"
           className="hidden"
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
+          onChange={(e) => setMarketingFile(e.target.files?.[0] || null)}
         />
       </label>
     </div>

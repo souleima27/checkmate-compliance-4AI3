@@ -1,94 +1,132 @@
 "use client";
 import { useReviewStore } from "@/stores/reviewStore";
-import { PlayCircle, LoaderCircle } from "lucide-react";
-
-const scopes = [
-  "Structure", "Contexte", "Fonds", "Disclaimers"
-] as const;
+import {
+  CheckCircle,
+  RotateCcw
+} from "lucide-react";
 
 export default function ReviewSidebar() {
-  const { scopes: chosen, toggleScope, startAnalysis, finishAnalysis, loading, analyzed, setFilterScopes } = useReviewStore();
+  const {
+    violations,
+    scopes: allScopes, // Typo in store definition? 'scopes' is boolean map. 
+    // Actually store has 'scopes' as Record<Scope, boolean>.
+    // But we also have filterScopes.
+    filterScopes,
+    setFilterScopes
+  } = useReviewStore();
 
-  const handleAnalyze = async () => {
-    startAnalysis();
-    // Simulation: calcule violations dummy
-    setTimeout(() => {
-      const fakeViolations = [
-        { id: "v1", page: 2, scope: "Disclaimers", title: "Disclaimer manquant", description: "Le disclaimer ESG doit être présent.", severity: "medium", bbox: { x: 60, y: 120, w: 180, h: 60 } },
-        { id: "v2", page: 4, scope: "Prospectus", title: "Contradiction Prospectus", description: "La performance annoncée dépasse la limite.", severity: "high", bbox: { x: 120, y: 200, w: 220, h: 80 } },
-        { id: "v3", page: 1, scope: "Structure", title: "Titre non conforme", description: "Structure de page non conforme aux standards.", severity: "low", bbox: { x: 40, y: 80, w: 140, h: 50 } },
-      ];
-      finishAnalysis(fakeViolations as any);
-      setFilterScopes([]);
-    }, 1200);
-  };
+  const definedScopes = ["Structure", "Contexte", "Fonds", "Disclaimers", "Prospectus"];
+
+  // Group violations by scope for counts
+  const counts: Record<string, number> = {};
+  violations.forEach(v => {
+    counts[v.scope] = (counts[v.scope] || 0) + 1;
+  });
 
   return (
-    <aside className="border rounded-xl p-6 bg-[#F1F8F4] shadow-sm sticky top-10">
-      <h3 className="text-lg font-bold mb-4 text-black">Compliance Sidebar</h3>
+    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm sticky top-24">
+      <h2 className="text-xl font-bold mb-6">Compliance Sidebar</h2>
 
-      <div className="mb-4">
-        <p className="text-sm text-black/70 mb-2">Sélection des contrôles</p>
-        <ul className="space-y-2">
-          {scopes.map((s) => (
-            <li key={s} className="flex items-center justify-between">
-              <label className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  className="accent-green-700 w-4 h-4"
-                  checked={!!chosen[s]}
-                  onChange={() => toggleScope(s)}
-                />
-                <span className="text-black">{s}</span>
-              </label>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <button
-        onClick={handleAnalyze}
-        disabled={loading}
-        className="w-full py-3 flex items-center gap-2 justify-center bg-green-700 text-white font-bold rounded-lg hover:bg-green-800 transition"
-      >
-        {loading ? <LoaderCircle size={20} className="animate-spin" /> : <PlayCircle size={20} />}
-        {loading ? "Analyse en cours..." : "Lancer l’analyse"}
-      </button>
-
-      {loading && (
-        <p className="text-center mt-3 text-sm text-black/70">Veuillez patienter ⏳</p>
-      )}
-
-      {analyzed && (
-        <div className="mt-6">
-          <p className="text-sm text-black/70 mb-2">Filtrer les annotations</p>
-          <div className="flex flex-wrap gap-2">
-            {scopes.map((s) => (
-              <button
-                key={s}
-                className="px-3 py-1 rounded-full border border-green-300 bg-green-50 text-black hover:bg-green-100"
-                onClick={() => {
-                  // toggle filtre
-                  const exists = s in chosen && chosen[s];
-                  if (exists) {
-                    setFilterScopes(Object.keys(chosen).filter((x) => x !== s) as any);
+      {/* Sélection des contrôles (Filter) */}
+      <div className="mb-8">
+        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">
+          Filtres par Scope
+        </h3>
+        <div className="space-y-3">
+          {definedScopes.map((scope) => (
+            <label key={scope} className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition">
+              <div
+                className={`w-5 h-5 rounded border flex items-center justify-center transition ${!filterScopes.length || filterScopes.includes(scope as any)
+                  ? "bg-green-600 border-green-600 text-white"
+                  : "border-gray-300 bg-white"
+                  }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  // Logic: if empty, clicking one selects it.
+                  // If in list, clicking removes it.
+                  // Logic optimized:
+                  let newScopes = [...filterScopes];
+                  if (newScopes.length === 0) {
+                    newScopes = [scope as any];
                   } else {
-                    setFilterScopes([...Object.keys(chosen), s as any] as any);
+                    if (newScopes.includes(scope as any)) {
+                      newScopes = newScopes.filter(s => s !== scope);
+                    } else {
+                      newScopes.push(scope as any);
+                    }
                   }
+                  setFilterScopes(newScopes);
                 }}
               >
-                {s}
-              </button>
-            ))}
-            <button
-              className="px-3 py-1 rounded-full bg-green-700 text-white hover:bg-green-800"
-              onClick={() => setFilterScopes([])}
-            >
-              Réinitialiser
-            </button>
-          </div>
+                {(!filterScopes.length || filterScopes.includes(scope as any)) && <CheckCircle size={14} />}
+              </div>
+              <span className="font-medium text-gray-700">{scope}</span>
+              {counts[scope] > 0 && (
+                <span className="ml-auto bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded-full">
+                  {counts[scope]}
+                </span>
+              )}
+            </label>
+          ))}
         </div>
-      )}
-    </aside>
+      </div>
+
+      {/* Liste des annotations / Violations Summary */}
+      <div>
+        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">
+          Violations Détectées ({violations.length})
+        </h3>
+        <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+          {violations.length === 0 ? (
+            <p className="text-sm text-gray-500 italic">Aucune violation détectée (ou analyse non lancée).</p>
+          ) : (
+            violations
+              .filter(v => filterScopes.length === 0 || filterScopes.includes(v.scope))
+              .map((v) => (
+                <div key={v.id} className={`p-3 border rounded-lg text-sm ${v.type === 'missing'
+                    ? 'bg-amber-50 border-amber-200'
+                    : 'bg-red-50 border-red-100'
+                  }`}>
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-2">
+                      {v.type === 'missing' && (
+                        <span className="font-bold text-xs px-2 py-0.5 rounded text-white bg-amber-500">
+                          MANQUANT
+                        </span>
+                      )}
+                      <span className={`font-bold text-xs px-2 py-0.5 rounded text-white ${v.scope === 'Disclaimers' ? 'bg-orange-500' :
+                          v.scope === 'Structure' ? 'bg-blue-600' :
+                            v.scope === 'Contexte' ? 'bg-purple-500' :
+                              v.scope === 'Fonds' ? 'bg-green-600' : 'bg-red-500'
+                        }`}>
+                        {v.scope}
+                      </span>
+                      {v.ruleId && (
+                        <span className="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded font-mono">
+                          {v.ruleId}
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-gray-400 text-xs">
+                      {v.type === 'missing' ? 'Document' : `Page ${v.page}`}
+                    </span>
+                  </div>
+                  <p className="font-semibold text-gray-800 mb-1">{v.title}</p>
+                  <p className="text-gray-600 leading-relaxed">{v.description}</p>
+                </div>
+              ))
+          )}
+        </div>
+      </div>
+
+      <div className="mt-8 pt-6 border-t border-gray-100">
+        <button
+          onClick={() => setFilterScopes([])}
+          className="w-full py-2 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition flex items-center justify-center gap-2"
+        >
+          <RotateCcw size={18} /> Réinitialiser filtres
+        </button>
+      </div>
+    </div>
   );
 }

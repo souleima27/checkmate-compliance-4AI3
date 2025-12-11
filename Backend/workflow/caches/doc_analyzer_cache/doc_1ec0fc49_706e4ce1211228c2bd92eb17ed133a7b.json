@@ -1,0 +1,66 @@
+{
+  "conformite_globale": {
+    "score": 70,
+    "niveau": "moyen"
+  },
+  "elements_conformes": [
+    {
+      "element": "Disclaimer",
+      "location": "Slide 2 - slide_2_shape_3",
+      "regle_id": "RC1",
+      "justification": "Le document inclut un disclaimer adapté au type de client retail."
+    },
+    {
+      "element": "Avertissements/disclaimers sur les risques",
+      "location": "Slide 4 - slide_4_shape_17",
+      "regle_id": "RS1",
+      "justification": "Les avertissements/disclaimers sur les risques sont en gras et utilisent la même police et taille que le texte principal."
+    },
+    {
+      "element": "Glossaire des termes techniques",
+      "location": "Slide 32 - slide_32_shape_1",
+      "regle_id": "RS3",
+      "justification": "Le document inclut un glossaire des termes techniques en fin de présentation."
+    }
+  ],
+  "elements_non_conformes": [
+    {
+      "element": "Mise en page",
+      "location": "Slide 3 - slide_3_shape_1",
+      "regle_id": "RS2",
+      "violation": "Le SRI et le disclaimer associé ne sont pas sur la même slide.",
+      "gravite": "moyenne"
+    },
+    {
+      "element": "Performances",
+      "location": "Slide 14 - slide_14_shape_9",
+      "regle_id": "RC23",
+      "violation": "Le document commence par les performances sans présenter le fonds au préalable.",
+      "gravite": "haute"
+    },
+    {
+      "element": "Benchmark",
+      "location": "Slide 17 - slide_17_shape_10",
+      "regle_id": "RC30",
+      "violation": "Les performances ne sont pas comparées à l'indicateur de référence du fonds.",
+      "gravite": "moyenne"
+    }
+  ],
+  "elements_manquants": [
+    {
+      "element_requis": "Mention obligatoire pour les fonds en pré-commercialisation",
+      "regle_id": "RC14"
+    },
+    {
+      "element_requis": "Nom du client pour les documents spécifiques",
+      "regle_id": "RC16"
+    }
+  ],
+  "recommandations": [
+    "Réorganiser la mise en page pour que le SRI et le disclaimer associé soient sur la même slide.",
+    "Présenter le fonds avant les performances.",
+    "Comparer les performances à l'indicateur de référence du fonds.",
+    "Ajouter la mention obligatoire pour les fonds en pré-commercialisation.",
+    "Inclure le nom du client pour les documents spécifiques."
+  ]
+}

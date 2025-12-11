@@ -1,0 +1,327 @@
+{
+  "status": "success",
+  "document_id": "doc_b16ced3f",
+  "timestamp": "2025-12-11T17:02:54.800461",
+  "analysis": {
+    "semantic_analysis": {
+      "consistency_score": 49.3,
+      "drafting_score": 51.3,
+      "lexical_score": 54.4,
+      "anglicisms_detected": [
+        "smart beta",
+        "Active Share",
+        "Momentum",
+        "YTW",
+        "Benchmark",
+        "Tracking-Error",
+        "Jensen’s alpha",
+        "Beta",
+        "ETF",
+        "Trend following",
+        "Black box",
+        "track record",
+        "YTM",
+        "Value at Risk (VaR)",
+        "S&P 500",
+        "Quantitative Portfolio Optimization",
+        "benchmark"
+      ],
+      "inconsistencies": [
+        {
+          "description": "Contradiction risque",
+          "location_1": "slide_2_shape_4",
+          "location_2": "slide_4_shape_17"
+        },
+        {
+          "description": "Contradiction risque",
+          "location_1": "slide_21_shape_2",
+          "location_2": "slide_23_shape_20"
+        }
+      ]
+    },
+    "compliance_details": [
+      {
+        "rule_id": "RC1",
+        "status": "compliant",
+        "evidence": "Le disclaimer est présent sur la slide 2",
+        "location": "slide_2_shape_4",
+        "confidence": 0.95
+      },
+      {
+        "rule_id": "RC2",
+        "status": "compliant",
+        "evidence": "Les sources sont mentionnées pour les données chiffrées",
+        "location": "slide_3_shape_2",
+        "confidence": 0.95
+      },
+      {
+        "rule_id": "RC3",
+        "status": "non_compliant",
+        "evidence": "Les opinions ne sont pas toujours atténuées",
+        "location": "slide_4_shape_10",
+        "confidence": 0.8
+      },
+      {
+        "rule_id": "RC4",
+        "status": "compliant",
+        "evidence": "La stratégie du fonds est présentée conformément à la documentation légale",
+        "location": "slide_4_shape_5",
+        "confidence": 0.95
+      },
+      {
+        "rule_id": "RC5",
+        "status": "non_compliant",
+        "evidence": "Les pays de commercialisation ne sont pas mentionnés",
+        "location": "",
+        "confidence": 0.5
+      },
+      {
+        "rule_id": "RC6",
+        "status": "compliant",
+        "evidence": "Les limites internes ne sont pas mentionnées",
+        "location": "",
+        "confidence": 0.95
+      },
+      {
+        "rule_id": "RC7",
+        "status": "non_compliant",
+        "evidence": "Des anglicismes non traduits sont présents",
+        "location": "",
+        "confidence": 0.8
+      },
+      {
+        "rule_id": "RC8",
+        "status": "non_compliant",
+        "evidence": "Le document n'est pas réservé aux clients professionnels",
+        "location": "",
+        "confidence": 0.5
+      },
+      {
+        "rule_id": "RC9",
+        "status": "compliant",
+        "evidence": "La présentation du fonds est séparée de la stratégie",
+        "location": "",
+        "confidence": 0.95
+      },
+      {
+        "rule_id": "RC10",
+        "status": "non_compliant",
+        "evidence": "La validation FSMA n'est pas mentionnée pour la Belgique",
+        "location": "",
+        "confidence": 0.5
+      },
+      {
+        "rule_id": "RC1",
+        "status": "non_compliant",
+        "evidence": "Le document ne précise pas si c'est un document retail ou professionnel.",
+        "location": "slide_1",
+        "confidence": 0.8
+      },
+      {
+        "rule_id": "RC2",
+        "status": "compliant",
+        "evidence": "Les sources sont mentionnées pour les données chiffrées.",
+        "location": "slide_8_shape_21",
+        "confidence": 0.95
+      },
+      {
+        "rule_id": "RC3",
+        "status": "compliant",
+        "evidence": "Les opinions sont atténuées avec des phrases comme 'selon notre opinion'.",
+        "location": "slide_8_shape_8",
+        "confidence": 0.9
+      },
+      {
+        "rule_id": "RC4",
+        "status": "non_compliant",
+        "evidence": "La stratégie du fonds n'est pas présentée de manière détaillée.",
+        "location": "slide_8_shape_8",
+        "confidence": 0.7
+      },
+      {
+        "rule_id": "RC5",
+        "status": "non_compliant",
+        "evidence": "Les pays de commercialisation ne sont pas mentionnés.",
+        "location": "",
+        "confidence": 0.5
+      },
+      {
+        "rule_id": "RC6",
+        "status": "compliant",
+        "evidence": "Les limites internes ne sont pas mentionnées.",
+        "location": "",
+        "confidence": 0.95
+      },
+      {
+        "rule_id": "RC7",
+        "status": "non_compliant",
+        "evidence": "Des anglicismes non traduits sont présents.",
+        "location": "",
+        "confidence": 0.8
+      },
+      {
+        "rule_id": "RC8",
+        "status": "non_compliant",
+        "evidence": "Le document ne précise pas si c'est destiné à des clients professionnels.",
+        "location": "",
+        "confidence": 0.5
+      },
+      {
+        "rule_id": "RC1",
+        "status": "non_compliant",
+        "evidence": "Le document ne précise pas si c'est un document retail ou professionnel.",
+        "location": "",
+        "confidence": 0.8
+      },
+      {
+        "rule_id": "RC2",
+        "status": "compliant",
+        "evidence": "Les études et données chiffrées sont accompagnées de notes de bas de page précisant la source et la date.",
+        "location": "slide_24_shape_25",
+        "confidence": 0.95
+      },
+      {
+        "rule_id": "RC3",
+        "status": "compliant",
+        "evidence": "Les opinions et hypothèses sont atténuées en utilisant des expressions comme 'selon notre analyse'.",
+        "location": "slide_21_shape_11",
+        "confidence": 0.9
+      },
+      {
+        "rule_id": "RC4",
+        "status": "non_compliant",
+        "evidence": "La stratégie du fonds n'est pas présentée de manière détaillée.",
+        "location": "",
+        "confidence": 0.7
+      },
+      {
+        "rule_id": "RC5",
+        "status": "non_compliant",
+        "evidence": "Les pays de commercialisation ne sont pas mentionnés.",
+        "location": "",
+        "confidence": 0.6
+      },
+      {
+        "rule_id": "RC6",
+        "status": "compliant",
+        "evidence": "Les limites internes ne sont pas mentionnées.",
+        "location": "",
+        "confidence": 0.95
+      },
+      {
+        "rule_id": "RC7",
+        "status": "non_compliant",
+        "evidence": "Des anglicismes non traduits sont utilisés.",
+        "location": "",
+        "confidence": 0.8
+      },
+      {
+        "rule_id": "RC8",
+        "status": "non_compliant",
+        "evidence": "Le document ne précise pas si c'est destiné à des clients professionnels.",
+        "location": "",
+        "confidence": 0.7
+      },
+      {
+        "rule_id": "RC9",
+        "status": "compliant",
+        "evidence": "La présentation du fonds est séparée de la présentation de la stratégie.",
+        "location": "",
+        "confidence": 0.9
+      },
+      {
+        "rule_id": "RC10",
+        "status": "non_compliant",
+        "evidence": "La validation préalable de la FSMA n'est pas mentionnée.",
+        "location": "",
+        "confidence": 0.6
+      },
+      {
+        "rule_id": "RC1",
+        "status": "non_compliant",
+        "evidence": "Le document ne précise pas si c'est un document retail ou professionnel.",
+        "location": "",
+        "confidence": 0.8
+      },
+      {
+        "rule_id": "RC2",
+        "status": "compliant",
+        "evidence": "Les études et données chiffrées sont accompagnées de notes de bas de page précisant la source et la date.",
+        "location": "slide_32_shape_2",
+        "confidence": 0.95
+      },
+      {
+        "rule_id": "RC3",
+        "status": "compliant",
+        "evidence": "Les opinions et hypothèses sont atténuées.",
+        "location": "",
+        "confidence": 0.9
+      },
+      {
+        "rule_id": "RC4",
+        "status": "compliant",
+        "evidence": "La stratégie du fonds est présentée conformément à la documentation légale.",
+        "location": "slide_31_shape_3_table",
+        "confidence": 0.95
+      },
+      {
+        "rule_id": "RC5",
+        "status": "compliant",
+        "evidence": "Les pays de commercialisation sont conformes aux dernières données.",
+        "location": "slide_31_shape_3_table",
+        "confidence": 0.95
+      },
+      {
+        "rule_id": "RC6",
+        "status": "compliant",
+        "evidence": "Les limites internes ne sont pas mentionnées.",
+        "location": "",
+        "confidence": 0.9
+      },
+      {
+        "rule_id": "RC7",
+        "status": "non_compliant",
+        "evidence": "Des anglicismes non traduits sont présents.",
+        "location": "",
+        "confidence": 0.8
+      },
+      {
+        "rule_id": "RC8",
+        "status": "non_compliant",
+        "evidence": "Le document ne précise pas si c'est un document réservé aux clients professionnels.",
+        "location": "",
+        "confidence": 0.8
+      },
+      {
+        "rule_id": "RC9",
+        "status": "compliant",
+        "evidence": "La présentation du fonds est séparée de celle de la stratégie.",
+        "location": "",
+        "confidence": 0.9
+      },
+      {
+        "rule_id": "RC10",
+        "status": "non_compliant",
+        "evidence": "Le document ne précise pas si la validation préalable de la FSMA a été effectuée pour la Belgique.",
+        "location": "",
+        "confidence": 0.8
+      }
+    ],
+    "global_assessment": {
+      "risk_level": "low",
+      "summary": "Document cohérent mais quelques anglicismes et non-conformités aux règles de conformité | Le document est globalement cohérent mais présente quelques risques de non-conformité, notamment en ce qui concerne les règles RC1, RC4, RC5 et RC7. | Le document présente quelques incohérences et non-conformités, notamment en ce qui concerne les règles RC1, RC4, RC5, RC7 et RC8. | Document cohérent mais quelques anglicismes et non-conformités aux règles de conformité."
+    }
+  },
+  "metrics": {
+    "semantic_consistency": 49.3,
+    "drafting_quality": 51.3,
+    "lexical_compliance": 54.4,
+    "rule_confidence": 80.5
+  },
+  "process_metrics": {
+    "latency_seconds": 210.69,
+    "llm_call_count": 7,
+    "llm_generation_time": 210.65,
+    "processing_overhead": 0.04
+  }
+}

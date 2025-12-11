@@ -1,0 +1,94 @@
+{
+  "glossaire_1": {
+    "nom": "Calcul des performances", 
+    "description": "Les performances cumulées des fonds sont calculées dividendes réinvestis. Les performances annualisées sont calculées selon la méthode actuarielle sur une base annuelle de 365 jours. Les écarts de performance du fonds par rapport à son indice de référence sont des écarts arithmétiques. Les indicateurs statiques sont en général calculés sur un pas de calcul hebdomadaire arrêté au vendredi, ou à défaut au jour précédent la valorisation."
+  },
+  "glossaire_2": {
+    "nom": "Active Share", 
+    "description": "Mesure du pourcentage de titres dans le portefeuille qui diffère de l’indice de référence. Plus l’active share est importante plus l’allocation du portefeuille s’éloigne de l’indice."
+  },
+  "glossaire_3": {
+    "nom": "Alpha de Jensen ", 
+    "description": "Mesure de l’écart de rendement entre le portefeuille et son indice de référence avec un niveau de risque similaire (ajusté du β). Il mesure la valeur ajoutée du fonds, ou la capacité du gérant à «battre le marché»: aussi connu comme l’excess return."
+  },
+  "glossaire_4": {
+    "nom": "Bêta", 
+    "description": "Le β mesure la sensibilité des performances d’un portefeuille par rapport à celles de son indice de référence, c’est-à-dire que lorsque que le benchmark varie de X%, le fonds varie, en moyenne, d’une amplitude égale à β*X%."
+  },
+  "glossaire_5": {
+    "nom": "Coefficient de correlation", 
+    "description": "Le coefficient de corrélation définit le degré de dépendance entre l’évolution des performances du portefeuille et celle de son indice de référence. Plus il est proche de 1, plus cette dépendance est forte. Un coefficient de corrélation négatif signifie que, en moyenne, le portefeuille fluctue de façon inverse à son indice de référence."
+  },
+  "glossaire_6": {
+    "nom": "Duration", 
+    "description": "La duration est une mesure du risque de taux des instruments obligataires. La duration apparaît comme une durée de vie moyenne actualisée de tous les flux (intérêt et capital)."
+  },
+  "glossaire_7": {
+    "nom": "Distance au Plancher Obligataire", 
+    "description": "Dans le cas des obligations convertibles, il s’agit de la valeur de la composante obligataire. La distance au plancher obligataire représente alors la valeur de l’option de conversion en actions."
+  },
+  "glossaire_8": {
+    "nom": "Maximum Drawdown", 
+    "description": "Le drawdown maximum correspond au niveau de perte (exprimé en %) constaté sur le fonds pendant la pire période de baisse sur la période considérée. "
+  },
+  "glossaire_9": {
+    "nom": "Maturité Moyenne", 
+    "description": "La durée de vie moyenne se définit comme étant l’échéance moyenne (en années) pondérée de tous les flux de trésorerie (y compris le remboursement de capital) résultant d’un investissement. Il s’agit donc un instrument de mesure permettant d’apprécier la sensibilité du prix d’un actif ou d’un portefeuille à un changement des taux d’intérêt."
+  },
+  "glossaire_10": {
+    "nom": "Ratio de Sharpe", 
+    "description": "Le ratio de Sharpe permet de mesurer le couple rendement/risque du portefeuille ou de son indicateur de référence. Il correspond à l’écart entre la performance annualisée du fonds (ou de son benchmark) par rapport au rendement annuel du taux sans risque, divisé par la volatilité du fonds (ou de son benchmark)."
+  },"glossaire_11": {
+    "nom": "Ratio d’information ", 
+    "description": "Le ratio d’information permet de mesurer la sur/sous-performance obtenue par le gérant lorsqu’il s’écarte de l’indicateur de référence. Il est égal à l’écart du rendement annualisé du portefeuille par rapport à son indicateur de référence, divisé par la tracking-error."
+  },
+  "glossaire_12": {
+    "nom": "Recovery Delay", 
+    "description": "Délai de récupération du drawdown maximum : il s’agit du délai pour effacer la perte sur la pire période de baisse et revenir au niveau initial."
+  },
+  "glossaire_13": {
+    "nom": "Rendement Actuariel ", 
+    "description": "Le taux de rendement actuariel d’une obligation est le taux de rendement réel de l’obligation pour un investisseur qui la conserve jusqu’à son remboursement, en supposant que l’émetteur ne fera pas défaut et en supposant un réinvestissement des intérêts au même taux actuariel."
+  },
+  "glossaire_14": {
+    "nom": "Sensibilité Actions", 
+    "description": "Pour les obligations convertibles, la sensibilité actions mesure la variation de leur valeur en % induite par une variation des marchés actions."
+  },
+  "glossaire_15": {
+    "nom": "Sensibilité Crédit", 
+    "description": "La sensibilité crédit permet de mesurer le risque lié aux variations de spreads de crédit. En cas de dégradation ou amélioration de la qualité des émetteurs, la valeur du portefeuille est susceptible d’évoluer. Ainsi, une valeur de +2% par exemple signifie que, pour une hausse instantanée (respectivement baisse) de 1% des spreads, la valeur du portefeuille baisserait (monterait) de 2%."
+  },
+  "glossaire_16": {
+    "nom": "Sensibilité Taux", 
+    "description": "Pour les obligations convertibles, la sensibilité taux mesure la variation de sa valeur en % induite par une variation du taux d’intérêt."
+  },
+  "glossaire_17": {
+    "nom": "Spread de crédit (prime de crédit)", 
+    "description": "Le spread de crédit désigne la prime de risque ou l’écart entre les rendements des obligations d’entreprises et les emprunts d’états de mêmes caractéristiques."
+  },
+  "glossaire_18": {
+    "nom": "Taux de rotation ", 
+    "description": "Le taux de rotation du portefeuille correspond à la somme des mouvements (achats et ventes de titres), diminuée du montant net des souscriptions/rachats, rapportée à l’actif net moyen constaté sur la période."
+  },
+  "glossaire_19": {
+    "nom": "Tracking-Error (ou écart de suivi)", 
+    "description": "Mesure du risque relatif pris par un fonds par rapport à son indicateur de référence. La tracking-error correspond à la volatilité des performances relatives, c’est-à-dire à l’écart-type annualisé des sur/sous-performances arithmétiques du portefeuille par rapport à son indicateur de référence."
+  },
+  "glossaire_20": {
+    "nom": "Weighted Average Life (WAL)", 
+    "description": "Pour les fonds monétaires : Durée de Vie Moyenne Pondérée du portefeuille jusqu’à la date d’extinction des instruments financiers."
+  },
+  "glossaire_21": {
+    "nom": "Weighted Average Maturity (WAM)", 
+    "description": "Maturité Moyenne Pondérée du portefeuille : mesure de la sensibilité au risque de taux des fonds monétaires."
+  },
+  "glossaire_22": {
+    "nom": "Value at Risk ex-post (VAR)", 
+    "description": "La VAR ex-post représente la perte maximale constatée d’un investisseur compte tenu d’un horizon de détention et d’un intervalle de confiance. Ainsi, une VAR quotidienne 1 an de x% calculée avec un intervalle de confiance de 99% signifie que, sur la période d’observation d’un an, seules 1% des performances quotidiennes ont été inférieures à x%."
+  },
+  "glossaire_23": {
+    "nom": "Volatilité", 
+    "description": "La volatilité est un indicateur de risque qui mesure l’ampleur des variations observées d’un portefeuille (ou d’un indice) sur une période donnée et se calcule par l’écart-type annualisé des performances absolues sur une période définie."
+  }
+
+}

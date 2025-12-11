@@ -1,0 +1,66 @@
+{
+  "conformite_globale": {
+    "score": 70,
+    "niveau": "moyen"
+  },
+  "elements_conformes": [
+    {
+      "element": "Disclaimer",
+      "location": "Slide 2 - slide_2_shape_3",
+      "regle_id": "RC1",
+      "justification": "Le document inclut un disclaimer adapté au type de client retail."
+    },
+    {
+      "element": "Avertissements/disclaimers sur les risques",
+      "location": "Slide 4 - slide_4_shape_17",
+      "regle_id": "RS1",
+      "justification": "Les avertissements/disclaimers sur les risques sont en gras et utilisent la même police et taille que le texte principal."
+    },
+    {
+      "element": "Glossaire des termes techniques",
+      "location": "Slide 32 - slide_32_shape_1",
+      "regle_id": "RS3",
+      "justification": "Le document inclut un glossaire des termes techniques en fin de présentation."
+    }
+  ],
+  "elements_non_conformes": [
+    {
+      "element": "Mise en page",
+      "location": "Slide 1",
+      "regle_id": "RS7",
+      "violation": "La présentation commence par la performance du fonds et non par sa présentation.",
+      "gravite": "haute"
+    },
+    {
+      "element": "Performances",
+      "location": "Slide 14 - slide_14_shape_9",
+      "regle_id": "RC23",
+      "violation": "Les performances sont présentées sans être accompagnées de la mention obligatoire 'les performances passées ne présagent pas des performances futures et ne sont pas constantes dans le temps'.",
+      "gravite": "moyenne"
+    },
+    {
+      "element": "Benchmark",
+      "location": "Slide 31 - slide_31_shape_3_table",
+      "regle_id": "RC30",
+      "violation": "Le benchmark n'est pas clairement indiqué.",
+      "gravite": "moyenne"
+    }
+  ],
+  "elements_manquants": [
+    {
+      "element_requis": "Mention du responsable de la validation de la présentation",
+      "regle_id": "RC18"
+    },
+    {
+      "element_requis": "Mention légale de la SGP",
+      "regle_id": "RS10"
+    }
+  ],
+  "recommandations": [
+    "Réorganiser la mise en page pour commencer par la présentation du fonds et non par les performances.",
+    "Ajouter la mention obligatoire 'les performances passées ne présagent pas des performances futures et ne sont pas constantes dans le temps' aux performances.",
+    "Indiquer clairement le benchmark utilisé.",
+    "Ajouter la mention du responsable de la validation de la présentation.",
+    "Inclure la mention légale de la SGP."
+  ]
+}

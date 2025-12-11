@@ -1,0 +1,90 @@
+[
+  {
+    "id": "RS1",
+    "categorie": "structurelle",
+    "type": "Formatage",
+    "description": "Les avertissements/disclaimers sur les risques doivent être en gras, utiliser la même police et taille que le texte principal, et être visibles (pas en note de bas de page).",
+    "section_origine": "SECTION 1: Règles générales",
+    "exigence": "Formatage spécifique des avertissements/disclaimers."
+  },
+  {
+    "id": "RS2",
+    "categorie": "structurelle",
+    "type": "Emplacement",
+    "description": "Pour chaque fonds présenté, la mention obligatoire du SRI avec le disclaimer associé doit être sur la même slide.",
+    "section_origine": "SECTION 1: Règles générales",
+    "exigence": "SRI et disclaimer associés doivent être sur la même slide."
+  },
+  {
+    "id": "RS3",
+    "categorie": "structurelle",
+    "type": "Emplacement",
+    "description": "Pour les présentations retail, inclure un Glossaire des termes techniques en fin de présentation.",
+    "section_origine": "SECTION 1: Règles générales",
+    "exigence": "Glossaire en fin de présentation retail."
+  },
+  {
+    "id": "RS4",
+    "categorie": "structurelle",
+    "type": "Structure",
+    "description": "La page de garde doit indiquer le nom du fonds, le mois et l’année, la mention « document promotionnel », et la cible (retail ou professionnel).",
+    "section_origine": "SECTION 2: Page de garde",
+    "exigence": "Informations obligatoires sur la page de garde."
+  },
+  {
+    "id": "RS5",
+    "categorie": "structurelle",
+    "type": "Formatage",
+    "description": "Pour les fonds en pré-commercialisation, la mention spécifique doit être en rouge et gras sur la page de garde.",
+    "section_origine": "SECTION 2: Page de garde",
+    "exigence": "Mention en rouge et gras pour les fonds en pré-commercialisation."
+  },
+  {
+    "id": "RS6",
+    "categorie": "structurelle",
+    "type": "Emplacement",
+    "description": "La Slide 2 doit contenir le disclaimer standard, la mention exhaustive du profil de risque, et les pays de commercialisation.",
+    "section_origine": "SECTION 3: La Slide 2",
+    "exigence": "Contenu obligatoire de la Slide 2."
+  },
+  {
+    "id": "RS7",
+    "categorie": "structurelle",
+    "type": "Ordre",
+    "description": "Ne jamais commencer une présentation par la performance : commencer à minima par la présentation du fonds.",
+    "section_origine": "SECTION 4: Pages suivantes",
+    "exigence": "Ordre de présentation : commencer par le fonds, pas par la performance."
+  },
+  {
+    "id": "RS8",
+    "categorie": "structurelle",
+    "type": "Formatage",
+    "description": "La Notation Morningstar doit être accompagnée de la date de calcul et de la catégorie Morningstar de référence.",
+    "section_origine": "SECTION 4: Pages suivantes",
+    "exigence": "Informations obligatoires avec la Notation Morningstar."
+  },
+  {
+    "id": "RS9",
+    "categorie": "structurelle",
+    "type": "Emplacement",
+    "description": "En fin de présentation, inclure les caractéristiques détaillées du fonds.",
+    "section_origine": "SECTION 4: Pages suivantes",
+    "exigence": "Caractéristiques détaillées du fonds en fin de présentation."
+  },
+  {
+    "id": "RS10",
+    "categorie": "structurelle",
+    "type": "Emplacement",
+    "description": "Mention légale de la SGP doit être présente en page de fin de présentation.",
+    "section_origine": "SECTION 5: Page de fin de présentation",
+    "exigence": "Mention légale de la SGP en fin de présentation."
+  },
+  {
+    "id": "RS11",
+    "categorie": "structurelle",
+    "type": "Formatage",
+    "description": "Un document commercial ou une communication externe ne peut pas débuter par les performances mais au minimum par la présentation du fonds. Ainsi les performances ne peuvent jamais représenter l’élément central d’un document commercial ou d’une communication externe quel qu’il soit. Elles ne doivent pas apparaitre de manière disproportionnée par rapport aux autres éléments (police de caractère identique au texte central).",
+    "section_origine": "SECTION 4: Pages suivantes",
+    "exigence": "La police de caractère des performances doit être identique au texte central."
+  }
+]

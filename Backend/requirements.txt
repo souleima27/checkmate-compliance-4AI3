@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+python-multipart
+# Add your agent dependencies below (examples based on your description)
+langgraph
+langchain
+langchain_openai
+openpyxl # For reading Excel files
+python-docx
+python-pptx
+pypdf
+openai
+tiktoken
+python-dotenv
+comtypes
+

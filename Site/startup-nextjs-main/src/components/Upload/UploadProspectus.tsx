@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Upload, FileText } from "lucide-react";
+import { useUploadStore } from "@/stores/uploadStore";
 
 export default function UploadProspectus() {
-  const [file, setFile] = useState<File | null>(null);
+  const { prospectusFile, setProspectusFile } = useUploadStore();
 
   return (
     <div className="border border-blue-300 bg-blue-50 rounded-xl p-6 shadow-sm hover:shadow transition">
@@ -20,13 +21,13 @@ export default function UploadProspectus() {
       <label className="cursor-pointer flex flex-col items-center justify-center border-2 border-dashed border-blue-400 rounded-lg h-40 hover:bg-blue-100 transition">
         <Upload className="text-blue-600 mb-2" size={32} />
         <span className="font-medium">
-          {file ? file.name : "Déposer ou sélectionner un fichier"}
+          {prospectusFile ? prospectusFile.name : "Déposer ou sélectionner un fichier"}
         </span>
         <input
           type="file"
           accept=".pdf,.docx"
           className="hidden"
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
+          onChange={(e) => setProspectusFile(e.target.files?.[0] || null)}
         />
       </label>
     </div>

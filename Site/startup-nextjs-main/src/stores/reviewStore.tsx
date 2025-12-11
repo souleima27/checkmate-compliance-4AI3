@@ -1,15 +1,18 @@
 "use client";
 import { create } from "zustand";
 
-type ReviewScope = "Structure" | "Contexte" | "Fonds" | "Disclaimers" | "Prospectus" | "Registration";
+export type ReviewScope = "Structure" | "Contexte" | "Fonds" | "Disclaimers" | "Prospectus" | "Registration";
 
-type Violation = {
+export type Violation = {
   id: string;
   page: number;
   scope: ReviewScope;
   title: string;
   description: string;
   severity: "low" | "medium" | "high";
+  ruleId?: string; // e.g., "RS1", "RC25"
+  location?: string; // e.g., "Slide 15 - slide_15_shape_9"
+  type?: "violation" | "missing"; // Type of issue
   bbox?: { x: number; y: number; w: number; h: number }; // pour overlay
 };
 
@@ -20,28 +23,37 @@ type ReviewState = {
   currentPage: number;
   analyzed: boolean;
   loading: boolean;
+
+  // Scopes and Filtering
   scopes: Record<ReviewScope, boolean>;
-  violations: Violation[];
-  showAnnotations: boolean;
   filterScopes: ReviewScope[];
 
-  setFile: (f: { fileName: string; fileType: ReviewState["fileType"]; totalPages: number }) => void;
-  setPage: (p: number) => void;
-  toggleScope: (s: ReviewScope) => void;
-  setScopes: (next: Record<ReviewScope, boolean>) => void;
+  // Data
+  violations: Violation[];
+  docStructure: any; // Raw document structure from backend (useful for PPTX fallback)
+
+  // UI State
+  showAnnotations: boolean;
+
+  // Actions
+  setFile: (info: Partial<ReviewState>) => void;
+  setPage: (page: number) => void;
+  toggleScope: (scope: ReviewScope) => void;
+  setFilterScopes: (scopes: ReviewScope[]) => void;
+  setShowAnnotations: (show: boolean) => void;
   startAnalysis: () => void;
-  finishAnalysis: (violations: Violation[]) => void;
-  setShowAnnotations: (v: boolean) => void;
-  setFilterScopes: (arr: ReviewScope[]) => void;
+  // Updated finishAnalysis to accept optional docStructure
+  finishAnalysis: (violations: Violation[], docStructure?: any) => void;
 };
 
 export const useReviewStore = create<ReviewState>((set) => ({
-  fileName: "presentation.pdf",
+  fileName: "document",
   fileType: "pdf",
-  totalPages: 12,
+  totalPages: 1,
   currentPage: 1,
   analyzed: false,
   loading: false,
+
   scopes: {
     Structure: true,
     Contexte: true,
@@ -51,15 +63,24 @@ export const useReviewStore = create<ReviewState>((set) => ({
     Registration: true,
   },
   violations: [],
+  docStructure: null,
   showAnnotations: false,
   filterScopes: [],
 
-  setFile: (f) => set({ fileName: f.fileName, fileType: f.fileType, totalPages: f.totalPages, currentPage: 1 }),
-  setPage: (p) => set((st) => ({ currentPage: Math.max(1, Math.min(st.totalPages, p)) })),
-  toggleScope: (s) => set((st) => ({ scopes: { ...st.scopes, [s]: !st.scopes[s] } })),
-  setScopes: (next) => set({ scopes: next }),
-  startAnalysis: () => set({ loading: true, analyzed: false }),
-  finishAnalysis: (violations) => set({ loading: false, analyzed: true, violations, showAnnotations: true }),
-  setShowAnnotations: (v) => set({ showAnnotations: v }),
-  setFilterScopes: (arr) => set({ filterScopes: arr }),
+  setFile: (info) => set((state) => ({ ...state, ...info })),
+  setPage: (p) => set((state) => ({ currentPage: Math.max(1, Math.min(state.totalPages, p)) })),
+  toggleScope: (s) => set((state) => ({ scopes: { ...state.scopes, [s]: !state.scopes[s] } })),
+  setFilterScopes: (scopes) => set({ filterScopes: scopes }),
+  setShowAnnotations: (show) => set({ showAnnotations: show }),
+
+  startAnalysis: () => set({ loading: true, analyzed: false, violations: [], docStructure: null }),
+  finishAnalysis: (violations, docStructure = null) => set({
+    loading: false,
+    analyzed: true,
+    violations,
+    docStructure,
+    showAnnotations: true,
+    // If docStructure is present (PPTX), update total pages from it
+    totalPages: docStructure?.total_slides || undefined
+  }),
 }));
