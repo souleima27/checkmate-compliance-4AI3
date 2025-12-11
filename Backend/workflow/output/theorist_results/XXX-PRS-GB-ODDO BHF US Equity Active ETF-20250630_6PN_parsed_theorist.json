@@ -1,7 +1,7 @@
 {
   "status": "success",
-  "document_id": "doc_f226ca8a",
-  "timestamp": "2025-12-11T18:01:59.223567",
+  "document_id": "doc_d6aeba97",
+  "timestamp": "2025-12-11T20:37:16.802467",
   "analysis": {
     "semantic_analysis": {
       "consistency_score": 0.0,
@@ -23,9 +23,9 @@
     "rule_confidence": 0.0
   },
   "process_metrics": {
-    "latency_seconds": 7.31,
+    "latency_seconds": 7.3,
     "llm_call_count": 7,
-    "llm_generation_time": 7.3,
-    "processing_overhead": 0.02
+    "llm_generation_time": 7.29,
+    "processing_overhead": 0.01
   }
 }

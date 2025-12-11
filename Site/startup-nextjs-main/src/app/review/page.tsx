@@ -5,6 +5,7 @@ import ReviewMetrics from "@/components/Review/ReviewMetrics";
 import ReviewViolations from "@/components/Review/ReviewViolations";
 import ReviewReport from "@/components/Review/ReviewReport";
 import ReviewActions from "@/components/Review/ReviewActions";
+import ReviewChatbot from "@/components/Review/ReviewChatbot";
 
 import { Metadata } from "next";
 
@@ -39,6 +40,7 @@ export default function ReviewPage() {
 
         {/* Boutons actions */}
         <ReviewActions />
+        <ReviewChatbot />
       </div>
     </>
   );

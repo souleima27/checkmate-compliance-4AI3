@@ -1,15 +1,13 @@
 import os
 import shutil
 import sys
-import asyncio
 import json
-from typing import List, Optional
+from typing import Optional
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import JSONResponse
 
-# Ensure 'workflow' directory is in PYTHONPATH so internal imports (like 'from config import...') work
+# Ensure 'workflow' directory is in PYTHONPATH so internal imports (like 'from config import ...') work
 sys.path.append(os.path.join(os.path.dirname(__file__), "workflow"))
 
 # Import both agents
@@ -30,6 +28,7 @@ app.add_middleware(
 UPLOAD_DIR = "uploads"
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "workflow", "output")
 CACHE_DIR = os.path.join(os.path.dirname(__file__), "workflow", "caches")
+
 METADATA_FILE = os.path.join(CACHE_DIR, "metadata.json")
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -61,9 +60,7 @@ def health_check():
 
 @app.post("/api/save_metadata")
 async def save_metadata(request: Request):
-    """
-    Save questionnaire metadata into workflow/caches/metadata.json
-    """
+    """Explicit endpoint to save metadata into workflow/caches/metadata.json."""
     try:
         data = await request.json()
         with open(METADATA_FILE, "w", encoding="utf-8") as f:
@@ -79,9 +76,9 @@ async def analyze_file(
     metadata: Optional[str] = Form(None)
 ):
     """
-    Endpoint to receive a document and trigger the compliance analysis workflow.
+    Receive a document and trigger the compliance analysis workflow.
     Runs BOTH doc_analyzer (structural) and theorist (contextual) agents.
-    Optionally accepts metadata as JSON string for rule filtering.
+    Accepts metadata as JSON string and saves it to caches.
     """
     if not doc_analyzer_agent:
         raise HTTPException(status_code=503, detail="DocumentComplianceAgent not initialized.")
@@ -91,22 +88,19 @@ async def analyze_file(
         file_path = os.path.join(UPLOAD_DIR, file.filename)
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
-            
+
         print(f"\n{'='*80}")
         print(f"📄 File saved to: {file_path}")
 
-        # 2. Parse metadata if provided
+        # 2. Parse and save metadata
         parsed_metadata = None
         if metadata:
             try:
                 parsed_metadata = json.loads(metadata)
                 print(f"📝 Metadata received: {parsed_metadata}")
-
-                # Save metadata automatically to caches
                 with open(METADATA_FILE, "w", encoding="utf-8") as f:
                     json.dump(parsed_metadata, f, indent=4, ensure_ascii=False)
                 print(f"💾 Metadata saved to {METADATA_FILE}")
-
             except json.JSONDecodeError as e:
                 print(f"⚠️ Failed to parse metadata JSON: {e}")
 
@@ -116,9 +110,9 @@ async def analyze_file(
         print(f"\n{'='*80}")
         print("🔍 PHASE 1: Doc Analyzer (Structural Rules)")
         print("="*80)
-        
+
         structural_result = doc_analyzer_agent.process_document(file_path, metadata=parsed_metadata)
-        
+
         # ========================================
         # 4. Run Theorist (Contextual Analysis)
         # ========================================
@@ -127,11 +121,10 @@ async def analyze_file(
             print(f"\n{'='*80}")
             print("🧠 PHASE 2: Theorist (Contextual Rules)")
             print("="*80)
-            
-            # Find the parsed JSON file created by doc_analyzer
+
             base_name = os.path.splitext(os.path.basename(file_path))[0]
             parsed_json_path = os.path.join(OUTPUT_DIR, "parsed_docs", f"{base_name}_parsed.json")
-            
+
             if os.path.exists(parsed_json_path):
                 print(f"  📂 Using parsed file: {parsed_json_path}")
                 contextual_result = theorist_agent.analyze_document(
@@ -152,20 +145,16 @@ async def analyze_file(
             "file_name": structural_result.get("file_name", file.filename),
             "document_id": structural_result.get("document_id"),
             "timestamp": structural_result.get("timestamp"),
-            
-            # Structural analysis (from doc_analyzer)
             "analysis": structural_result.get("analysis", {}),
             "metrics": structural_result.get("metrics", {}),
             "doc_structure": structural_result.get("doc_structure", {}),
-            
-            # Contextual analysis (from theorist)
             "contextual_analysis": contextual_result,
         }
-        
+
         print(f"\n{'='*80}")
         print("✅ ANALYSIS COMPLETE (Both Agents)")
         print("="*80)
-        
+
         return combined_result
 
     except Exception as e:
@@ -174,7 +163,6 @@ async def analyze_file(
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
     finally:
-        # Cleanup if desired
         pass
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@ import featuresData from "./featuresData";
 
 const Features = () => {
   return (
-    <section id="fonctionnalites" className="py-16 md:py-20 lg:py-28 bg-white">
+    <section id="fonctionnalites" className="py-16 md:py-20 lg:py-28 bg-[var(--color-page-bg)]">
       <div className="container">
         <SectionTitle
           title="Fonctionnalités principales"
