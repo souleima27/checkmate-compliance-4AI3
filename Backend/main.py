@@ -7,9 +7,28 @@ from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from workflow.llm_client import LlamaClient
-
+import urllib.parse
+from fastapi.responses import FileResponse
+import os
 
 llm = LlamaClient()
+
+def get_file_type(filename: str) -> str:
+    ext = os.path.splitext(filename)[1].lower().strip(".")
+    # Normalize common types
+    if ext in ["ppt", "pptx"]:
+        return "pptx"
+    if ext in ["doc", "docx"]:
+        return "docx"
+    if ext == "pdf":
+        return "pdf"
+    return ext or "unknown"
+
+def encode_filename_for_url(filename: str) -> str:
+    # Use percent-encoding to make Office Viewer happy with spaces and special chars
+    return urllib.parse.quote(filename, safe="")
+
+
 
 def load_json(path):
     if os.path.exists(path):
@@ -45,8 +64,6 @@ METADATA_FILE = os.path.join(CACHE_DIR, "metadata.json")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(CACHE_DIR, exist_ok=True)
 
-# Serve uploaded files statically so frontend can access them
-app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 # Initialize both Agents at startup
 print("⏳ Initializing AI Agents (loading models)...")
@@ -64,6 +81,17 @@ try:
     print("✅ TheoristAgent initialized successfully.")
 except Exception as e:
     print(f"❌ Failed to initialize TheoristAgent: {e}")
+
+@app.get("/uploads/{filename}")
+async def get_file(filename: str):
+    file_path = os.path.join(UPLOAD_DIR, filename)
+    return FileResponse(file_path)
+
+@app.get("/api/download/{filename}")
+async def download_file(filename: str):
+    file_path = os.path.join(UPLOAD_DIR, filename)
+    return FileResponse(file_path, filename=filename)
+
 
 @app.get("/")
 def health_check():
@@ -152,8 +180,9 @@ async def analyze_file(
         # ========================================
         # 5. Merge Results
         # ========================================
+        original_file_name = os.path.basename(file_path)
         combined_result = {
-            "file_name": structural_result.get("file_name", file.filename),
+            "file_name":original_file_name ,
             "document_id": structural_result.get("document_id"),
             "timestamp": structural_result.get("timestamp"),
             "analysis": structural_result.get("analysis", {}),

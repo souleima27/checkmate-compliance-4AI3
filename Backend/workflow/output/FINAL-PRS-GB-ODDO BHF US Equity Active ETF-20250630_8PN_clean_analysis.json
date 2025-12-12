@@ -1,33 +1,86 @@
 {
-  "document_id": "doc_fe07aa2f",
+  "document_id": "doc_15676cf7",
   "file_name": "FINAL-PRS-GB-ODDO BHF US Equity Active ETF-20250630_8PN_clean.pptx",
-  "timestamp": "2025-12-11T14:09:41.131886",
+  "timestamp": "2025-12-12T19:23:43.816410",
   "metrics": {
-    "compliance_score": 0.0,
-    "completeness": 0.0,
-    "correctness": 0.0,
-    "llm_score": 0.0,
-    "total_conforme": 0,
-    "total_non_conforme": 0,
-    "total_manquant": 0,
-    "total_requis": 0
+    "compliance_score": 0.375,
+    "completeness": 0.75,
+    "correctness": 0.5,
+    "llm_score": 0.7,
+    "total_conforme": 3,
+    "total_non_conforme": 3,
+    "total_manquant": 2,
+    "total_requis": 8
   },
   "analysis": {
     "conformite_globale": {
-      "score": 0,
-      "niveau": "inconnu"
+      "score": 70,
+      "niveau": "moyen"
     },
-    "elements_conformes": [],
-    "elements_non_conformes": [],
-    "elements_manquants": [],
-    "recommandations": [
-      "Analyse LLM a échoué - vérification manuelle requise"
+    "elements_conformes": [
+      {
+        "element": "Disclaimer",
+        "location": "Slide 2 - slide_2_shape_3",
+        "regle_id": "RC1",
+        "justification": "Le document inclut un disclaimer adapté au type de client retail."
+      },
+      {
+        "element": "Avertissements/disclaimers sur les risques",
+        "location": "Slide 4 - slide_4_shape_17",
+        "regle_id": "RS1",
+        "justification": "Les avertissements/disclaimers sur les risques sont en gras et utilisent la même police et taille que le texte principal."
+      },
+      {
+        "element": "Glossaire des termes techniques",
+        "location": "Slide 32 - slide_32_shape_1",
+        "regle_id": "RS3",
+        "justification": "Le document inclut un glossaire des termes techniques en fin de présentation."
+      }
     ],
-    "fallback": true
+    "elements_non_conformes": [
+      {
+        "element": "Mise en page",
+        "location": "Slide 1",
+        "regle_id": "RS7",
+        "violation": "La présentation commence par la performance et non par la présentation du fonds.",
+        "gravite": "haute"
+      },
+      {
+        "element": "Performances",
+        "location": "Slide 14 - slide_14_shape_9",
+        "regle_id": "RC23",
+        "violation": "Les performances sont présentées sans être accompagnées de la mention obligatoire 'les performances passées ne présagent pas des performances futures et ne sont pas constantes dans le temps'.",
+        "gravite": "moyenne"
+      },
+      {
+        "element": "Benchmark",
+        "location": "Slide 31 - slide_31_shape_3_table",
+        "regle_id": "RC30",
+        "violation": "Le benchmark n'est pas clairement indiqué.",
+        "gravite": "moyenne"
+      }
+    ],
+    "elements_manquants": [
+      {
+        "element_requis": "Mention du responsable de la validation de la présentation",
+        "regle_id": "RC18"
+      },
+      {
+        "element_requis": "Mention légale de la SGP",
+        "regle_id": "RS10"
+      }
+    ],
+    "recommandations": [
+      "Réorganiser la mise en page pour commencer par la présentation du fonds et non par les performances.",
+      "Ajouter la mention obligatoire 'les performances passées ne présagent pas des performances futures et ne sont pas constantes dans le temps' aux performances.",
+      "Indiquer clairement le benchmark utilisé.",
+      "Ajouter la mention du responsable de la validation de la présentation.",
+      "Ajouter la mention légale de la SGP."
+    ]
   },
   "doc_structure": {
     "type": "pptx",
-    "document_id": "doc_fe07aa2f",
+    "document_id": "doc_15676cf7",
     "file_name": "FINAL-PRS-GB-ODDO BHF US Equity Active ETF-20250630_8PN_clean.pptx",
     "total_slides": 35,
     "slides": [
