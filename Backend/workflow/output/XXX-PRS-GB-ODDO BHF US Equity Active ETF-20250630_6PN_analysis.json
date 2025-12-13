@@ -1,16 +1,16 @@
 {
-  "document_id": "doc_685a8e8d",
+  "document_id": "doc_aadfdb84",
   "file_name": "XXX-PRS-GB-ODDO BHF US Equity Active ETF-20250630_6PN.pptx",
-  "timestamp": "2025-12-12T17:01:33.875980",
+  "timestamp": "2025-12-12T23:49:42.437356",
   "metrics": {
-    "compliance_score": 0.375,
-    "completeness": 0.75,
+    "compliance_score": 0.333,
+    "completeness": 0.667,
     "correctness": 0.5,
     "llm_score": 0.7,
     "total_conforme": 3,
     "total_non_conforme": 3,
-    "total_manquant": 2,
-    "total_requis": 8
+    "total_manquant": 3,
+    "total_requis": 9
   },
   "analysis": {
     "conformite_globale": {
@@ -22,42 +22,42 @@
         "element": "Disclaimer",
         "location": "Slide 2 - slide_2_shape_3",
         "regle_id": "RC1",
-        "justification": "Le document inclut un disclaimer adapté au type de client"
+        "justification": "Le document inclut un disclaimer adapté au type de client (professionnel)."
       },
       {
         "element": "Avertissements/disclaimers sur les risques",
         "location": "Slide 4 - slide_4_shape_17",
         "regle_id": "RS1",
-        "justification": "Les avertissements/disclaimers sur les risques sont en gras et utilisent la même police et taille que le texte principal"
+        "justification": "Les avertissements/disclaimers sur les risques sont en gras et utilisent la même police et taille que le texte principal."
       },
       {
-        "element": "Mention du responsable de la validation",
-        "location": "Slide 5 - slide_5_shape_14",
-        "regle_id": "RC18",
-        "justification": "Le responsable de la validation est mentionné"
+        "element": "SRI et disclaimer associés",
+        "location": "Slide 3 - slide_3_shape_2",
+        "regle_id": "RS2",
+        "justification": "La mention obligatoire du SRI avec le disclaimer associé est sur la même slide."
       }
     ],
     "elements_non_conformes": [
       {
-        "element": "Présentation des performances",
-        "location": "Slide 14 - slide_14_shape_9",
-        "regle_id": "RC23",
-        "violation": "La présentation commence par les performances",
+        "element": "Mise en page",
+        "location": "Slide 4 - slide_4_shape_5",
+        "regle_id": "RS7",
+        "violation": "La présentation commence par la performance et non par la présentation du fonds.",
         "gravite": "haute"
       },
       {
-        "element": "Mise en page des performances",
+        "element": "Performances",
         "location": "Slide 14 - slide_14_shape_9",
-        "regle_id": "RS11",
-        "violation": "La police de caractère des performances n'est pas identique au texte central",
+        "regle_id": "RC23",
+        "violation": "Les performances sont présentées sans être accompagnées de la présentation du fonds.",
         "gravite": "moyenne"
       },
       {
-        "element": "Mention des frais de gestion",
-        "location": "",
-        "regle_id": "RC33",
-        "violation": "Les frais de gestion ne sont pas mentionnés",
-        "gravite": "haute"
+        "element": "Benchmark",
+        "location": "Slide 17 - slide_17_shape_10",
+        "regle_id": "RC30",
+        "violation": "Les performances ne sont pas comparées à l'indicateur de référence du fonds.",
+        "gravite": "moyenne"
       }
     ],
     "elements_manquants": [
@@ -68,19 +68,22 @@
       {
         "element_requis": "Mention légale de la SGP",
         "regle_id": "RS10"
+      },
+      {
+        "element_requis": "Nom du client",
+        "regle_id": "RC16"
       }
     ],
     "recommandations": [
-      "Réorganiser la présentation pour commencer par la présentation du fonds et non par les performances",
-      "Utiliser une police de caractère identique pour les performances et le texte central",
-      "Mentionner les frais de gestion dans le document",
-      "Ajouter un glossaire des termes techniques en fin de présentation",
-      "Inclure la mention légale de la SGP en fin de présentation"
+      "Réorganiser la mise en page pour commencer par la présentation du fonds.",
+      "Ajouter un glossaire des termes techniques en fin de présentation.",
+      "Inclure la mention légale de la SGP en fin de présentation.",
+      "Préciser le nom du client dans le document."
     ]
   },
   "doc_structure": {
     "type": "pptx",
-    "document_id": "doc_685a8e8d",
+    "document_id": "doc_aadfdb84",
     "file_name": "XXX-PRS-GB-ODDO BHF US Equity Active ETF-20250630_6PN.pptx",
     "total_slides": 35,
     "slides": [
