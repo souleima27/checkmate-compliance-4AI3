@@ -211,14 +211,10 @@ async def get_context():
             "metadata": load_json(METADATA_FILE),
         },
         "persistent": {
-            "regles_contextuelles": load_json(
-                os.path.join(CACHE_DIR, "regles_contextuelles.json")
-            ),
-            "regles_structurelles": load_json(
-                os.path.join(CACHE_DIR, "regles_structurelles.json")
-            ),
+            "regles_contextuelles": load_json(os.path.join(CACHE_DIR, "regles_contextuelles.json")),
+            "regles_structurelles": load_json(os.path.join(CACHE_DIR, "regles_structurelles.json")),
             "glossaires": load_json(os.path.join(CACHE_DIR, "glossaires.json")),
-            "funds": load_json(os.path.join(CACHE_DIR, "funds.json")),
+            "funds": load_json(os.path.join(CACHE_DIR, "fond_registred.json")),
         },
     }
 
