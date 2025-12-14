@@ -3,7 +3,7 @@
 const getApiBaseUrl = (): string => {
   if (typeof window !== "undefined") {
     const hostname = window.location.hostname;
-    return `http://${hostname}:8000/api`;
+    return `http://${hostname}:8000/api`; 
   }
   return "http://localhost:8000/api";
 };
@@ -23,10 +23,10 @@ export async function analyzeDocument(
     formData.append("metadata", JSON.stringify(metadata));
   }
 
-  console.log(`📡 Calling API at: ${API_URL}/analyze`);
+  console.log(`📡 Calling API at: ${API_URL}/analyze`); 
   console.log("📤 With metadata:", metadata);
 
-  const response = await fetch(`${API_URL}/analyze`, {
+  const response = await fetch(`${API_URL}/analyze`, { 
     method: "POST",
     body: formData,
   });
@@ -34,7 +34,7 @@ export async function analyzeDocument(
   if (!response.ok) {
     const errorText = await response.text();
     console.error("❌ API Error:", errorText);
-    throw new Error(`Analysis failed: ${response.status} ${response.statusText}`);
+    throw new Error(`Analysis failed: ${response.status} ${response.statusText}`); 
   }
 
   return response.json();
