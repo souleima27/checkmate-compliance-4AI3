@@ -1,20 +1,7 @@
 "use client";
 
 import { useReviewStore } from "@/stores/reviewStore";
-import { ChevronLeft, ChevronRight, Eye, EyeOff, Loader2 } from "lucide-react";
-import { useState, useEffect } from "react";
-import dynamic from "next/dynamic";
-
-// ✅ Dynamic imports to disable SSR for react-pdf (fixes DOMMatrix error)
-const Document = dynamic(() => import("react-pdf").then((mod) => mod.Document), { ssr: false });
-const Page = dynamic(() => import("react-pdf").then((mod) => mod.Page), { ssr: false });
-const pdfjsPromise = import("react-pdf").then((mod) => mod.pdfjs);
-
-// ✅ Styles (safe on client)
-import "react-pdf/dist/Page/TextLayer.css";
-import "react-pdf/dist/Page/AnnotationLayer.css";
-
-const API_URL = "http://localhost:8000";
+import { ChevronLeft, ChevronRight, Eye, EyeOff } from "lucide-react";
 
 export default function ReviewPreview() {
   const {
@@ -29,45 +16,11 @@ export default function ReviewPreview() {
     docStructure,
     setPage,
     setShowAnnotations,
-    setFile,
   } = useReviewStore();
-
-  const [loading, setLoading] = useState(false);
-  const [pdfSource, setPdfSource] = useState<string | null>(null);
-
-  // ✅ Configure worker only on client
-  useEffect(() => {
-    pdfjsPromise.then((pdfjs) => {
-      pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
-    });
-  }, []);
-
-  const remoteUrl = fileName ? `${API_URL}/uploads/${encodeURIComponent(fileName)}` : null;
-
-  useEffect(() => {
-    if (!remoteUrl) return;
-    setLoading(true);
-    fetch(remoteUrl)
-      .then((res) => res.blob())
-      .then((blob) => {
-        const url = URL.createObjectURL(blob);
-        setPdfSource(url);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching PDF blob:", err);
-        setLoading(false);
-      });
-  }, [remoteUrl]);
 
   const pageViolations = violations.filter(
     (v) => v.page === currentPage && (filterScopes.length === 0 || filterScopes.includes(v.scope))
   );
-
-  function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
-    setFile({ fileName: fileName || "", fileType: "pdf", totalPages: numPages });
-    setLoading(false);
-  }
 
   return (
     <div className="rounded-xl p-6 shadow-sm mb-8 border border-green-200 bg-[#F1F8F4]">
@@ -78,39 +31,9 @@ export default function ReviewPreview() {
         </p>
       </div>
 
-      {/* Viewer surface */}
+      {/* JSON-based viewer surface */}
       <div className="relative h-[600px] flex justify-center rounded-lg border border-green-300 bg-gray-100 overflow-auto">
-        {!pdfSource && (
-          <div className="flex items-center justify-center h-full text-black/60">
-            {loading ? (
-              <div className="flex gap-2">
-                <Loader2 className="animate-spin" /> Chargement...
-              </div>
-            ) : (
-              "Aucun fichier chargé"
-            )}
-          </div>
-        )}
-
-        {pdfSource && fileType === "pdf" && (
-          <Document
-            file={pdfSource}
-            onLoadSuccess={onDocumentLoadSuccess}
-            onLoadStart={() => setLoading(true)}
-            loading={
-              <div className="flex items-center gap-2 mt-10">
-                <Loader2 className="animate-spin" /> Chargement du PDF...
-              </div>
-            }
-            error={<div className="text-red-500 mt-10">Erreur de chargement du PDF</div>}
-            className="flex justify-center"
-          >
-            <Page pageNumber={currentPage} width={600} renderTextLayer={false} renderAnnotationLayer={false} />
-          </Document>
-        )}
-
-        {/* PPTX Viewer */}
-        {fileType === "pptx" && docStructure && (
+        {fileType === "pptx" && docStructure ? (
           <div className="w-full h-full bg-white p-8 overflow-auto">
             {(() => {
               const slideData = docStructure.slides?.[currentPage - 1];
@@ -169,6 +92,10 @@ export default function ReviewPreview() {
                 </div>
               );
             })()}
+          </div>
+        ) : (
+          <div className="flex items-center justify-center h-full text-black/60">
+            Aucun aperçu disponible — utilisez l’analyse JSON.
           </div>
         )}
 
