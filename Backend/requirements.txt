@@ -12,5 +12,4 @@ pypdf
 openai
 tiktoken
 python-dotenv
-comtypes
 numpy

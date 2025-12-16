@@ -2,15 +2,29 @@ import os
 import shutil
 import sys
 import json
-from typing import Optional
+from typing import Optional, List
 
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from pydantic import BaseModel
 
 from workflow.llm_client import LlamaClient
 
+# Ensure 'utils' is importable
+current_dir = os.path.dirname(__file__)
+if current_dir not in sys.path:
+    sys.path.append(current_dir)
+
+from utils.conversion import convert_to_pdf
+from utils.injection import inject_violations
+
 llm = LlamaClient()
+
+class InjectionModel(BaseModel):
+    fileName: str
+    violations: List[dict]
 
 
 def load_json(path):
@@ -32,6 +46,7 @@ from workflow.theorist import TheoristAgent
 
 
 app = FastAPI(title="Compliance Check API")
+
 
 # Configure CORS (development mode)
 app.add_middleware(
@@ -76,9 +91,49 @@ except Exception as e:
 def health_check():
     return {
         "status": "ok",
-        "message": "Compliance Backend is running (2 agents)",
+        "message": "Compliance Backend is running (LibreOffice + Injection Enabled)",
     }
 
+# --- NEW ENDPOINTS ---
+
+@app.get("/api/convert/{filename}")
+async def convert_file(filename: str):
+    """Convert PPTX/DOCX to PDF for preview using LibreOffice."""
+    file_path = os.path.join(UPLOAD_DIR, filename)
+    if not os.path.exists(file_path):
+        raise HTTPException(404, "File not found")
+        
+    output_dir = os.path.join(CACHE_DIR, "conversions")
+    try:
+        # This uses local LibreOffice or falls back (if implemented)
+        pdf_path = convert_to_pdf(file_path, output_dir)
+        return FileResponse(pdf_path, media_type="application/pdf")
+    except Exception as e:
+        print(f"Conversion failed: {e}")
+        # Return error details to help debug
+        raise HTTPException(500, f"Conversion failed: {str(e)}")
+
+@app.post("/api/download-annotated")
+async def download_annotated(data: InjectionModel):
+    """
+    Inject violations into the original file and return it.
+    Expects fileName and violations list in body.
+    """
+    file_path = os.path.join(UPLOAD_DIR, data.fileName)
+    if not os.path.exists(file_path):
+        raise HTTPException(404, "File not found")
+        
+    output_dir = os.path.join(OUTPUT_DIR, "annotated")
+    try:
+        output_path = inject_violations(file_path, data.violations, output_dir)
+        filename = os.path.basename(output_path)
+        # Return as attachment
+        return FileResponse(output_path, filename=filename, media_type="application/octet-stream")
+    except Exception as e:
+        print(f"Injection failed: {e}")
+        raise HTTPException(500, f"Injection failed: {str(e)}")
+
+# ---------------------
 
 @app.post("/api/save_metadata")
 async def save_metadata(request: Request):

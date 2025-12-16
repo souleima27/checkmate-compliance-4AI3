@@ -1,33 +1,89 @@
 {
-  "document_id": "doc_6e0022dd",
+  "document_id": "doc_f30d3ca4",
   "file_name": "47861-6PG-FR-ODDO BHF Algo Trend US-20250831 v3 pn.pptx",
-  "timestamp": "2025-12-11T11:11:50.259036",
+  "timestamp": "2025-12-16T23:16:40.091139",
   "metrics": {
-    "compliance_score": 0.0,
-    "completeness": 0.0,
-    "correctness": 0.0,
-    "llm_score": 0.0,
-    "total_conforme": 0,
-    "total_non_conforme": 0,
-    "total_manquant": 0,
-    "total_requis": 0
+    "compliance_score": 0.333,
+    "completeness": 0.667,
+    "correctness": 0.5,
+    "llm_score": 0.7,
+    "total_conforme": 3,
+    "total_non_conforme": 3,
+    "total_manquant": 3,
+    "total_requis": 9
   },
   "analysis": {
     "conformite_globale": {
-      "score": 0,
-      "niveau": "inconnu"
+      "score": 70,
+      "niveau": "moyen"
     },
-    "elements_conformes": [],
-    "elements_non_conformes": [],
-    "elements_manquants": [],
-    "recommandations": [
-      "Analyse LLM a échoué - vérification manuelle requise"
+    "elements_conformes": [
+      {
+        "element": "Mention du SRI",
+        "location": "Slide 1 - slide_1_shape_3",
+        "regle_id": "RS2",
+        "justification": "La mention du SRI est présente sur la même slide que le disclaimer associé"
+      },
+      {
+        "element": "Disclaimer standard",
+        "location": "Slide 2 - slide_2_shape_2",
+        "regle_id": "RS6",
+        "justification": "Le disclaimer standard est présent sur la Slide 2"
+      },
+      {
+        "element": "Caractéristiques détaillées du fonds",
+        "location": "Slide 6 - slide_6_shape_4_table",
+        "regle_id": "RS9",
+        "justification": "Les caractéristiques détaillées du fonds sont présentes en fin de présentation"
+      }
     ],
-    "fallback": true
+    "elements_non_conformes": [
+      {
+        "element": "Avertissements/disclaimers sur les risques",
+        "location": "Slide 1 - slide_1_shape_5",
+        "regle_id": "RS1",
+        "violation": "Les avertissements/disclaimers sur les risques ne sont pas en gras et ne utilisent pas la même police et taille que le texte principal",
+        "gravite": "moyenne"
+      },
+      {
+        "element": "Présentation des performances",
+        "location": "Slide 3 - slide_3_shape_3",
+        "regle_id": "RC23",
+        "violation": "La présentation des performances commence par les performances passées et non par la présentation du fonds",
+        "gravite": "haute"
+      },
+      {
+        "element": "Mention des risques liés à la durabilité",
+        "location": "Slide 5 - slide_5_shape_1",
+        "regle_id": "RC20",
+        "violation": "La mention des risques liés à la durabilité est incomplète et ne respecte pas les consignes selon l'approche du fonds",
+        "gravite": "moyenne"
+      }
+    ],
+    "elements_manquants": [
+      {
+        "element_requis": "Glossaire des termes techniques",
+        "regle_id": "RS3"
+      },
+      {
+        "element_requis": "Mention légale de la SGP",
+        "regle_id": "RS10"
+      },
+      {
+        "element_requis": "Indication du responsable de la validation de la présentation",
+        "regle_id": "RC18"
+      }
+    ],
+    "recommandations": [
+      "Réviser les avertissements/disclaimers sur les risques pour les rendre conformes aux règles",
+      "Réorganiser la présentation des performances pour commencer par la présentation du fonds",
+      "Compléter la mention des risques liés à la durabilité pour respecter les consignes selon l'approche du fonds",
+      "Ajouter le glossaire des termes techniques, la mention légale de la SGP et l'indication du responsable de la validation de la présentation"
+    ]
   },
   "doc_structure": {
     "type": "pptx",
-    "document_id": "doc_6e0022dd",
+    "document_id": "doc_f30d3ca4",
     "file_name": "47861-6PG-FR-ODDO BHF Algo Trend US-20250831 v3 pn.pptx",
     "total_slides": 6,
     "slides": [

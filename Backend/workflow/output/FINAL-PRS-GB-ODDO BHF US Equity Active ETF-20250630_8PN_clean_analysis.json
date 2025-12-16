@@ -1,7 +1,7 @@
 {
-  "document_id": "doc_15676cf7",
+  "document_id": "doc_d165dda1",
   "file_name": "FINAL-PRS-GB-ODDO BHF US Equity Active ETF-20250630_8PN_clean.pptx",
-  "timestamp": "2025-12-12T19:23:43.816410",
+  "timestamp": "2025-12-14T18:07:34.180616",
   "metrics": {
     "compliance_score": 0.375,
     "completeness": 0.75,
@@ -42,21 +42,21 @@
         "element": "Mise en page",
         "location": "Slide 1",
         "regle_id": "RS7",
-        "violation": "La présentation commence par la performance et non par la présentation du fonds.",
+        "violation": "La présentation commence par la performance du fonds et non par sa présentation.",
         "gravite": "haute"
       },
       {
         "element": "Performances",
         "location": "Slide 14 - slide_14_shape_9",
-        "regle_id": "RC23",
-        "violation": "Les performances sont présentées sans être accompagnées de la mention obligatoire 'les performances passées ne présagent pas des performances futures et ne sont pas constantes dans le temps'.",
+        "regle_id": "RC25",
+        "violation": "Les performances ne sont pas présentées sur une durée minimum de 10 ans.",
         "gravite": "moyenne"
       },
       {
         "element": "Benchmark",
         "location": "Slide 31 - slide_31_shape_3_table",
         "regle_id": "RC30",
-        "violation": "Le benchmark n'est pas clairement indiqué.",
+        "violation": "Les performances ne sont pas comparées à l'indicateur de référence du fonds.",
         "gravite": "moyenne"
       }
     ],
@@ -71,16 +71,16 @@
       }
     ],
     "recommandations": [
-      "Réorganiser la mise en page pour commencer par la présentation du fonds et non par les performances.",
-      "Ajouter la mention obligatoire 'les performances passées ne présagent pas des performances futures et ne sont pas constantes dans le temps' aux performances.",
-      "Indiquer clairement le benchmark utilisé.",
-      "Ajouter la mention du responsable de la validation de la présentation.",
-      "Ajouter la mention légale de la SGP."
+      "Réorganiser la mise en page pour commencer par la présentation du fonds et non par sa performance.",
+      "Ajouter les performances sur une durée minimum de 10 ans.",
+      "Comparer les performances à l'indicateur de référence du fonds.",
+      "Inclure la mention du responsable de la validation de la présentation.",
+      "Inclure la mention légale de la SGP."
     ]
   },
   "doc_structure": {
     "type": "pptx",
-    "document_id": "doc_15676cf7",
+    "document_id": "doc_d165dda1",
     "file_name": "FINAL-PRS-GB-ODDO BHF US Equity Active ETF-20250630_8PN_clean.pptx",
     "total_slides": 35,
     "slides": [

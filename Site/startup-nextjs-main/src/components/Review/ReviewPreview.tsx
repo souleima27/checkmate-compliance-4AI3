@@ -1,9 +1,10 @@
 "use client";
 
 import { useReviewStore } from "@/stores/reviewStore";
-import { ChevronLeft, ChevronRight, Eye, EyeOff, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye, EyeOff, Loader2, Upload, Download } from "lucide-react";
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 
 // ✅ Dynamic imports to disable SSR for react-pdf (fixes DOMMatrix error)
 const Document = dynamic(() => import("react-pdf").then((mod) => mod.Document), { ssr: false });
@@ -17,23 +18,29 @@ import "react-pdf/dist/Page/AnnotationLayer.css";
 const API_URL = "http://localhost:8000";
 
 export default function ReviewPreview() {
+  const router = useRouter();
   const {
     fileName,
-    fileType,
+    fileType: storeFileType,
     totalPages,
     currentPage,
     analyzed,
     showAnnotations,
     violations,
     filterScopes,
-    docStructure,
     setPage,
     setShowAnnotations,
     setFile,
   } = useReviewStore();
 
+  // Derive fileType from fileName extension (more reliable than store)
+  const fileType = fileName?.toLowerCase().endsWith(".pptx") ? "pptx"
+    : fileName?.toLowerCase().endsWith(".pdf") ? "pdf"
+      : storeFileType || "pdf";
+
   const [loading, setLoading] = useState(false);
   const [pdfSource, setPdfSource] = useState<string | null>(null);
+  const [downloading, setDownloading] = useState(false);
 
   // ✅ Configure worker only on client
   useEffect(() => {
@@ -42,134 +49,171 @@ export default function ReviewPreview() {
     });
   }, []);
 
-  const remoteUrl = fileName ? `${API_URL}/uploads/${encodeURIComponent(fileName)}` : null;
-
+  // Fetch PDF source (Convert PPTX -> PDF or fetch PDF directly)
   useEffect(() => {
-    if (!remoteUrl) return;
+    // Check for invalid or default filename
+    if (!fileName || fileName === "document") {
+      setPdfSource(null);
+      return;
+    }
+
     setLoading(true);
-    fetch(remoteUrl)
-      .then((res) => res.blob())
+
+    // Determine the URL: direct file or conversion endpoint
+    // IMPORTANT: use percent encoding for filenames with spaces
+    // For PPTX/DOCX, use the new LibreOffice conversion endpoint
+    const url = fileType === "pptx" || (fileName.endsWith(".docx"))
+      ? `${API_URL}/api/convert/${encodeURIComponent(fileName)}`
+      : `${API_URL}/uploads/${encodeURIComponent(fileName)}`;
+
+    console.log(`fetching document from ${url}`);
+
+    fetch(url)
+      .then((res) => {
+        if (!res.ok) throw new Error(`Fetch failed: ${res.statusText}`);
+        return res.blob();
+      })
       .then((blob) => {
-        const url = URL.createObjectURL(blob);
-        setPdfSource(url);
+        const objectUrl = URL.createObjectURL(blob);
+        setPdfSource(objectUrl);
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Error fetching PDF blob:", err);
+        console.error("Error fetching document blob:", err);
         setLoading(false);
       });
-  }, [remoteUrl]);
+  }, [fileName, fileType]);
 
   const pageViolations = violations.filter(
     (v) => v.page === currentPage && (filterScopes.length === 0 || filterScopes.includes(v.scope))
   );
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
-    setFile({ fileName: fileName || "", fileType: "pdf", totalPages: numPages });
+    // Keep fileType generally as is, but we are viewing it as a PDF
+    setFile({ fileName: fileName || "", fileType: fileType, totalPages: numPages });
     setLoading(false);
+  }
+
+  const handleDownloadAnnotated = async () => {
+    if (!fileName) return;
+    try {
+      setDownloading(true);
+      const res = await fetch(`${API_URL}/api/download-annotated`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fileName: fileName,
+          violations: violations
+        })
+      });
+
+      if (!res.ok) throw new Error("Download failed");
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `annotated_${fileName}`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (e) {
+      console.error(e);
+      alert("Erreur lors du téléchargement");
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  // Handle Empty State / Refresh (file lost from memory)
+  if (!fileName || fileName === "document") {
+    return (
+      <div className="rounded-xl p-10 shadow-sm mb-8 border border-green-200 bg-[#F1F8F4] flex flex-col items-center text-center">
+        <h2 className="text-xl font-semibold text-gray-800 mb-2">Aucun document chargé</h2>
+        <p className="text-gray-600 mb-6 max-w-md">
+          Le document n'est plus en mémoire (probablement suite à un rafraîchissement de page).
+          Veuillez le recharger.
+        </p>
+        <button
+          onClick={() => router.push('/upload')}
+          className="inline-flex items-center gap-2 px-6 py-3 bg-green-700 text-white rounded-lg hover:bg-green-800 font-medium transition shadow-sm"
+        >
+          <Upload size={20} />
+          Retourner à l'upload
+        </button>
+      </div>
+    );
   }
 
   return (
     <div className="rounded-xl p-6 shadow-sm mb-8 border border-green-200 bg-[#F1F8F4]">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-black">Aperçu de la présentation</h2>
-        <p className="text-sm text-black/70">
-          {fileName} — {fileType?.toUpperCase()}
-        </p>
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-4">
+        <div>
+          <h2 className="text-xl font-semibold text-black">Aperçu de la présentation</h2>
+          <p className="text-sm text-black/70">
+            {fileName} — {fileType?.toUpperCase()}
+          </p>
+        </div>
+
+        {/* Download Button */}
+        {analyzed && (
+          <button
+            onClick={handleDownloadAnnotated}
+            disabled={downloading}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 text-sm font-medium transition"
+          >
+            {downloading ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
+            {downloading ? "Génération..." : "Télécharger avec Notes"}
+          </button>
+        )}
       </div>
 
       {/* Viewer surface */}
       <div className="relative h-[600px] flex justify-center rounded-lg border border-green-300 bg-gray-100 overflow-auto">
-        {!pdfSource && (
-          <div className="flex items-center justify-center h-full text-black/60">
-            {loading ? (
-              <div className="flex gap-2">
-                <Loader2 className="animate-spin" /> Chargement...
-              </div>
-            ) : (
-              "Aucun fichier chargé"
-            )}
+
+        {/* Loading State */}
+        {loading && !pdfSource && (
+          <div className="flex flex-col items-center justify-center h-full text-black/60 gap-4">
+            <Loader2 className="animate-spin text-green-700" size={48} />
+            <div className="text-center">
+              <p className="font-semibold text-green-800 text-lg mb-1">
+                {fileType === "pptx" ? "Conversion du PPTX en PDF..." : "Chargement du document..."}
+              </p>
+              {fileType === "pptx" && (
+                <p className="text-sm text-gray-500 max-w-xs mx-auto">
+                  Conversion serveur via LibreOffice pour un rendu fidèle.
+                </p>
+              )}
+            </div>
           </div>
         )}
 
-        {pdfSource && fileType === "pdf" && (
+        {/* Error State */}
+        {!pdfSource && !loading && (
+          <div className="flex flex-col items-center justify-center h-full text-red-500 gap-3">
+            <p className="font-medium">Erreur lors du chargement de l'aperçu/conversion.</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 text-sm text-gray-700"
+            >
+              Réessayer
+            </button>
+          </div>
+        )}
+
+        {/* PDF Viewer (Used for both PDF and Converted PPTX) */}
+        {pdfSource && (
           <Document
             file={pdfSource}
             onLoadSuccess={onDocumentLoadSuccess}
             onLoadStart={() => setLoading(true)}
-            loading={
-              <div className="flex items-center gap-2 mt-10">
-                <Loader2 className="animate-spin" /> Chargement du PDF...
-              </div>
-            }
-            error={<div className="text-red-500 mt-10">Erreur de chargement du PDF</div>}
+            loading={null}
+            error={<div className="text-red-500 mt-10">Erreur de rendu PDF</div>}
             className="flex justify-center"
           >
             <Page pageNumber={currentPage} width={600} renderTextLayer={false} renderAnnotationLayer={false} />
           </Document>
-        )}
-
-        {/* PPTX Viewer */}
-        {fileType === "pptx" && docStructure && (
-          <div className="w-full h-full bg-white p-8 overflow-auto">
-            {(() => {
-              const slideData = docStructure.slides?.[currentPage - 1];
-              if (!slideData)
-                return <div className="text-center text-gray-400 mt-20">Slide {currentPage} introuvable</div>;
-
-              return (
-                <div className="space-y-6">
-                  <div className="border-b pb-2 mb-4">
-                    <h3 className="text-lg font-bold text-gray-800">Slide {slideData.slide_number}</h3>
-                    <p className="text-xs text-gray-500">Layout: {slideData.layout}</p>
-                  </div>
-
-                  {slideData.content?.map((item: any) => (
-                    <div key={item.id} className="mb-4">
-                      {item.type === "text" && (
-                        <p className="text-gray-800 whitespace-pre-wrap leading-relaxed">{item.text}</p>
-                      )}
-                      {item.type === "table" && (
-                        <div className="overflow-x-auto border rounded-lg">
-                          <table className="min-w-full divide-y divide-gray-200">
-                            <tbody className="bg-white divide-y divide-gray-200">
-                              {item.data?.map((row: any[], rIdx: number) => (
-                                <tr key={rIdx}>
-                                  {row.map((cell: any, cIdx: number) => (
-                                    <td key={cIdx} className="px-3 py-2 text-sm text-gray-700 border-r">
-                                      {cell}
-                                    </td>
-                                  ))}
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      )}
-                      {item.type === "image_text" && (
-                        <div className="bg-gray-50 p-3 italic text-xs text-gray-600 border-l-4 border-gray-300">
-                          {item.text}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-
-                  {slideData.images?.length > 0 && (
-                    <div className="mt-6 pt-4 border-t border-dashed">
-                      <p className="text-xs font-semibold text-gray-500 mb-2">Images détectées sur ce slide :</p>
-                      <div className="grid grid-cols-2 gap-4">
-                        {slideData.images.map((img: any) => (
-                          <div key={img.id} className="bg-gray-100 rounded p-2 text-center text-xs text-gray-600">
-                            Image: {img.name}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })()}
-          </div>
         )}
 
         {/* Overlay annotations */}
