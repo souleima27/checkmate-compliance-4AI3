@@ -1,7 +1,7 @@
 {
-  "document_id": "doc_aadfdb84",
+  "document_id": "doc_37f81f6a",
   "file_name": "XXX-PRS-GB-ODDO BHF US Equity Active ETF-20250630_6PN.pptx",
-  "timestamp": "2025-12-12T23:49:42.437356",
+  "timestamp": "2025-12-14T15:13:57.017299",
   "metrics": {
     "compliance_score": 0.333,
     "completeness": 0.667,
@@ -22,7 +22,7 @@
         "element": "Disclaimer",
         "location": "Slide 2 - slide_2_shape_3",
         "regle_id": "RC1",
-        "justification": "Le document inclut un disclaimer adapté au type de client (professionnel)."
+        "justification": "Le document inclut un disclaimer adapté au type de client retail."
       },
       {
         "element": "Avertissements/disclaimers sur les risques",
@@ -31,30 +31,30 @@
         "justification": "Les avertissements/disclaimers sur les risques sont en gras et utilisent la même police et taille que le texte principal."
       },
       {
-        "element": "SRI et disclaimer associés",
-        "location": "Slide 3 - slide_3_shape_2",
-        "regle_id": "RS2",
-        "justification": "La mention obligatoire du SRI avec le disclaimer associé est sur la même slide."
+        "element": "Glossaire des termes techniques",
+        "location": "Slide 32 - slide_32_shape_1",
+        "regle_id": "RS3",
+        "justification": "Le document inclut un glossaire des termes techniques en fin de présentation."
       }
     ],
     "elements_non_conformes": [
       {
         "element": "Mise en page",
-        "location": "Slide 4 - slide_4_shape_5",
+        "location": "Slide 1",
         "regle_id": "RS7",
-        "violation": "La présentation commence par la performance et non par la présentation du fonds.",
+        "violation": "La présentation commence par la performance du fonds, ce qui n'est pas autorisé.",
         "gravite": "haute"
       },
       {
         "element": "Performances",
         "location": "Slide 14 - slide_14_shape_9",
-        "regle_id": "RC23",
-        "violation": "Les performances sont présentées sans être accompagnées de la présentation du fonds.",
+        "regle_id": "RC25",
+        "violation": "Les performances ne sont pas présentées sur une durée minimum de 10 ans.",
         "gravite": "moyenne"
       },
       {
         "element": "Benchmark",
-        "location": "Slide 17 - slide_17_shape_10",
+        "location": "Slide 31 - slide_31_shape_3_table",
         "regle_id": "RC30",
         "violation": "Les performances ne sont pas comparées à l'indicateur de référence du fonds.",
         "gravite": "moyenne"
@@ -62,28 +62,30 @@
     ],
     "elements_manquants": [
       {
-        "element_requis": "Glossaire des termes techniques",
-        "regle_id": "RS3"
+        "element_requis": "Mention obligatoire pour les fonds en pré-commercialisation",
+        "regle_id": "RC14"
       },
       {
-        "element_requis": "Mention légale de la SGP",
-        "regle_id": "RS10"
-      },
-      {
-        "element_requis": "Nom du client",
+        "element_requis": "Nom du client pour les documents spécifiques",
         "regle_id": "RC16"
+      },
+      {
+        "element_requis": "Indication du responsable de la validation de la présentation",
+        "regle_id": "RC18"
       }
     ],
     "recommandations": [
-      "Réorganiser la mise en page pour commencer par la présentation du fonds.",
-      "Ajouter un glossaire des termes techniques en fin de présentation.",
-      "Inclure la mention légale de la SGP en fin de présentation.",
-      "Préciser le nom du client dans le document."
+      "Réorganiser la mise en page pour commencer par la présentation du fonds et non par les performances.",
+      "Ajouter les performances sur une durée minimum de 10 ans.",
+      "Comparer les performances à l'indicateur de référence du fonds.",
+      "Inclure la mention obligatoire pour les fonds en pré-commercialisation.",
+      "Ajouter le nom du client pour les documents spécifiques.",
+      "Indiquer le responsable de la validation de la présentation."
     ]
   },
   "doc_structure": {
     "type": "pptx",
-    "document_id": "doc_aadfdb84",
+    "document_id": "doc_37f81f6a",
     "file_name": "XXX-PRS-GB-ODDO BHF US Equity Active ETF-20250630_6PN.pptx",
     "total_slides": 35,
     "slides": [
