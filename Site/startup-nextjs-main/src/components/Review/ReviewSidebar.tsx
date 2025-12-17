@@ -15,7 +15,7 @@ export default function ReviewSidebar() {
     setFilterScopes
   } = useReviewStore();
 
-  const definedScopes = ["Structure", "Contexte", "Fonds", "Disclaimers", "Prospectus"];
+  const definedScopes = ["Structure", "Contexte", "Fonds", "Disclaimers", "Glossaires"];
 
   // Group violations by scope for counts
   const counts: Record<string, number> = {};
@@ -84,8 +84,8 @@ export default function ReviewSidebar() {
               .filter(v => filterScopes.length === 0 || filterScopes.includes(v.scope))
               .map((v) => (
                 <div key={v.id} className={`p-3 border rounded-lg text-sm ${v.type === 'missing'
-                    ? 'bg-amber-50 border-amber-200'
-                    : 'bg-red-50 border-red-100'
+                  ? 'bg-amber-50 border-amber-200'
+                  : 'bg-red-50 border-red-100'
                   }`}>
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">
@@ -97,7 +97,8 @@ export default function ReviewSidebar() {
                       <span className={`font-bold text-xs px-2 py-0.5 rounded text-white ${v.scope === 'Disclaimers' ? 'bg-orange-500' :
                           v.scope === 'Structure' ? 'bg-blue-600' :
                             v.scope === 'Contexte' ? 'bg-purple-500' :
-                              v.scope === 'Fonds' ? 'bg-green-600' : 'bg-red-500'
+                              v.scope === 'Fonds' ? 'bg-green-600' :
+                                v.scope === 'Glossaires' ? 'bg-teal-500' : 'bg-red-500'
                         }`}>
                         {v.scope}
                       </span>

@@ -9,7 +9,6 @@ import { useRouter } from "next/navigation";
 // ✅ Dynamic imports to disable SSR for react-pdf (fixes DOMMatrix error)
 const Document = dynamic(() => import("react-pdf").then((mod) => mod.Document), { ssr: false });
 const Page = dynamic(() => import("react-pdf").then((mod) => mod.Page), { ssr: false });
-const pdfjsPromise = import("react-pdf").then((mod) => mod.pdfjs);
 
 // ✅ Styles (safe on client)
 import "react-pdf/dist/Page/TextLayer.css";
@@ -44,8 +43,14 @@ export default function ReviewPreview() {
 
   // ✅ Configure worker only on client
   useEffect(() => {
-    pdfjsPromise.then((pdfjs) => {
-      pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+    import("react-pdf").then((mod) => {
+      const pdfjs = mod.pdfjs;
+      // Precise URL for pdfjs v5 ESM worker
+      const workerUrl = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.mjs`;
+      console.log(`[ReviewPreview] Setting up PDF worker: ${workerUrl}`);
+      pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
+    }).catch(err => {
+      console.error("[ReviewPreview] Failed to load react-pdf/pdfjs:", err);
     });
   }, []);
 
@@ -66,7 +71,7 @@ export default function ReviewPreview() {
       ? `${API_URL}/api/convert/${encodeURIComponent(fileName)}`
       : `${API_URL}/uploads/${encodeURIComponent(fileName)}`;
 
-    console.log(`fetching document from ${url}`);
+    console.log(`[ReviewPreview] fetching document: ${url}`);
 
     fetch(url)
       .then((res) => {
@@ -74,6 +79,10 @@ export default function ReviewPreview() {
         return res.blob();
       })
       .then((blob) => {
+        console.log(`[ReviewPreview] blob received: size=${blob.size}, type=${blob.type}`);
+        if (blob.size < 100) {
+          console.warn("[ReviewPreview] warning: blob size is very small, might be an error message instead of PDF");
+        }
         const objectUrl = URL.createObjectURL(blob);
         setPdfSource(objectUrl);
         setLoading(false);
@@ -207,12 +216,21 @@ export default function ReviewPreview() {
           <Document
             file={pdfSource}
             onLoadSuccess={onDocumentLoadSuccess}
-            onLoadStart={() => setLoading(true)}
-            loading={null}
+            onLoadError={(error) => console.error("PDF Load Error:", error)}
+            onSourceError={(error) => console.error("PDF Source Error:", error)}
+            loading={<div className="flex items-center justify-center p-10"><Loader2 className="animate-spin text-green-700" size={32} /></div>}
             error={<div className="text-red-500 mt-10">Erreur de rendu PDF</div>}
             className="flex justify-center"
           >
-            <Page pageNumber={currentPage} width={600} renderTextLayer={false} renderAnnotationLayer={false} />
+            {totalPages > 0 && (
+              <Page
+                key={`page_${currentPage}`} // Force re-render on page change to avoid stale state
+                pageNumber={currentPage}
+                width={600}
+                renderTextLayer={false}
+                renderAnnotationLayer={false}
+              />
+            )}
           </Document>
         )}
 

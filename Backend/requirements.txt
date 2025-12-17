@@ -13,3 +13,5 @@ openai
 tiktoken
 python-dotenv
 numpy
+scikit-learn
+python-levenshtein

@@ -70,10 +70,10 @@ export default function UploadActions() {
 
         const cat = (issue.categorie || issue.category || "").toLowerCase();
         if (cat.includes("structur")) scope = "Structure";
-        else if (cat.includes("fond") || cat.includes("fund")) scope = "Fonds";
+        else if (cat.includes("fond") || cat.includes("fund") || cat.includes("registration")) scope = "Fonds";
         else if (cat.includes("disclaimer") || cat.includes("legal")) scope = "Disclaimers";
-        else if (cat.includes("prospectus") || cat.includes("reglementaire")) scope = "Prospectus";
-        else if (cat.includes("registration")) scope = "Registration";
+        else if (cat.includes("prospectus") || cat.includes("reglementaire")) scope = "Fonds"; // Merging small prospectus issues into Fonds if any
+        else scope = "Contexte";
 
         const locationMatch = issue.location?.match(/Slide\s+(\d+)/i);
         const pageNum = locationMatch ? parseInt(locationMatch[1]) : 1;
@@ -162,7 +162,120 @@ export default function UploadActions() {
 
       const allViolations = [...mappedViolations, ...mappedMissing, ...mappedContextual];
 
-      finishAnalysis(allViolations, result.analysis?.doc_structure || result.doc_structure);
+      // ========================================
+      // 4. Map DISCLAIMER & GLOSSARY Violations (from new_dis_glos)
+      // ========================================
+      const disGlosAnalysis = result.disclaimer_analysis || {};
+      const resultsDetailles = disGlosAnalysis.resultats_detailles || {};
+      const disGlosViolations: any[] = [];
+
+      // A. Registration issues (Mapped to "Fonds")
+      const regInfo = resultsDetailles.enregistrement || {};
+      (regInfo.pays_manquants || []).forEach((p: any, i: number) => {
+        disGlosViolations.push({
+          id: `dis-reg-miss-${i}`,
+          page: 0,
+          scope: "Fonds",
+          title: `Enregistrement manquant: ${p.pays_base || p.pays_document || "Inconnu"}`,
+          description: p.raison || "Pays mentionné mais non enregistré dans la base de données centrale.",
+          severity: "high",
+          type: "violation",
+          analysisType: "dis_glos"
+        });
+      });
+      (regInfo.pays_exces || []).forEach((p: any, i: number) => {
+        disGlosViolations.push({
+          id: `dis-reg-exc-${i}`,
+          page: 0,
+          scope: "Fonds",
+          title: `Pays non enregistré: ${p.pays_document || "Inconnu"}`,
+          description: "Ce pays est mentionné dans le document mais n'est pas dans la liste officielle des pays de commercialisation.",
+          severity: "medium",
+          type: "violation",
+          analysisType: "dis_glos"
+        });
+      });
+
+      // B. Disclaimer issues (Restored category)
+      const disInfo = resultsDetailles.disclaimers || {};
+      (disInfo.obligatoires?.absents || []).forEach((d: any, i: number) => {
+        disGlosViolations.push({
+          id: `dis-miss-${i}`,
+          page: 0,
+          scope: "Disclaimers",
+          title: `Disclaimer obligatoire absent: ${d.titre}`,
+          description: d.raison || "Un disclaimer requis pour cette langue/cible n'a pas été détecté.",
+          severity: "high",
+          type: "missing",
+          analysisType: "dis_glos"
+        });
+      });
+      (disInfo.alignement?.non_conformes || []).forEach((d: any, i: number) => {
+        disGlosViolations.push({
+          id: `dis-align-${i}`,
+          page: d.slide || 0,
+          scope: "Disclaimers",
+          title: "Alignement Disclaimer incorrect",
+          description: d.raison || "Le texte du disclaimer ne semble pas correspondre au contenu de ce slide.",
+          severity: "medium",
+          type: "violation",
+          analysisType: "dis_glos"
+        });
+      });
+
+      // C. Glossary issues
+      const glosInfo = resultsDetailles.glossaires || {};
+      (glosInfo.obligatoires?.absents || []).forEach((g: any, i: number) => {
+        let pageNum = 0;
+        if (typeof glosInfo.glossary_slide === "number") pageNum = glosInfo.glossary_slide;
+
+        disGlosViolations.push({
+          id: `glos-miss-${i}`,
+          page: pageNum,
+          scope: "Glossaires",
+          title: `Terme glossaire manquant: ${g.terme}`,
+          description: g.raison || "Ce terme technique obligatoire n'est pas défini dans la section Glossaire.",
+          severity: "low",
+          type: "missing",
+          analysisType: "dis_glos"
+        });
+      });
+
+      // D. Source issues
+      const srcInfo = resultsDetailles.sources || {};
+      (srcInfo.non_conformes || []).forEach((s: any, i: number) => {
+        disGlosViolations.push({
+          id: `src-bad-${i}`,
+          page: s.slide || 0,
+          scope: "Contexte",
+          title: "Qualité de source insuffisante",
+          description: `${s.raison}. ${s.suggestion || ""}`,
+          severity: "low",
+          type: "violation",
+          analysisType: "dis_glos"
+        });
+      });
+
+      // E. Fund Characteristics issues
+      const charInfo = resultsDetailles.caracteristiques || {};
+      if (charInfo.completeness_score < 0.8) {
+        (charInfo.missing_elements || []).forEach((m: any, i: number) => {
+          disGlosViolations.push({
+            id: `char-miss-${i}`,
+            page: disGlosAnalysis.statistiques_globales?.slide_caracteristiques || 0,
+            scope: "Fonds",
+            title: `Caractéristique manquante: ${m}`,
+            description: `L'élément "${m}" est manquant ou incomplet dans la présentation des caractéristiques du fonds.`,
+            severity: "medium",
+            type: "missing",
+            analysisType: "dis_glos"
+          });
+        });
+      }
+
+      const finalViolations = [...allViolations, ...disGlosViolations];
+
+      finishAnalysis(finalViolations, result.analysis?.doc_structure || result.doc_structure);
       router.push("/review");
     } catch (error) {
       console.error("Analysis error:", error);
@@ -183,11 +296,10 @@ export default function UploadActions() {
       <button
         onClick={handleAnalyze}
         disabled={isAnalyzing || !marketingFile}
-        className={`px-8 py-4 flex items-center gap-3 mx-auto font-bold rounded-lg shadow transition ${
-          isAnalyzing || !marketingFile
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-green-700 text-white hover:bg-green-800"
-        }`}
+        className={`px-8 py-4 flex items-center gap-3 mx-auto font-bold rounded-lg shadow transition ${isAnalyzing || !marketingFile
+          ? "bg-gray-400 cursor-not-allowed"
+          : "bg-green-700 text-white hover:bg-green-800"
+          }`}
       >
         {isAnalyzing ? <Loader2 className="animate-spin" size={22} /> : <ScanSearch size={22} />}
         {isAnalyzing ? "Analyse en cours..." : "Lancer l’analyse"}

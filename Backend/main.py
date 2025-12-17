@@ -43,6 +43,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "workflow"))
 # Import both agents
 from workflow.doc_analyzer import DocumentComplianceAgent
 from workflow.theorist import TheoristAgent
+from workflow.new_dis_glos import OptimizedDisclaimerGlossaryAgent
 
 
 app = FastAPI(title="Compliance Check API")
@@ -73,6 +74,7 @@ print("⏳ Initializing AI Agents (loading models)...")
 
 doc_analyzer_agent = None
 theorist_agent = None
+dis_glos_agent = None
 
 try:
     doc_analyzer_agent = DocumentComplianceAgent()
@@ -85,6 +87,12 @@ try:
     print("✅ TheoristAgent initialized successfully.")
 except Exception as e:
     print(f"❌ Failed to initialize TheoristAgent: {e}")
+
+try:
+    dis_glos_agent = OptimizedDisclaimerGlossaryAgent()
+    print("✅ OptimizedDisclaimerGlossaryAgent initialized successfully.")
+except Exception as e:
+    print(f"❌ Failed to initialize OptimizedDisclaimerGlossaryAgent: {e}")
 
 
 @app.get("/")
@@ -227,7 +235,32 @@ async def analyze_file(
             contextual_result = {"error": "TheoristAgent not initialized"}
 
         # ========================================
-        # 5. Merge Results
+        # 5. Disclaimer & Glossary Analysis
+        # ========================================
+        dis_glos_result = None
+        if dis_glos_agent and file.filename.lower().endswith(".pptx"):
+            print("\n" + "=" * 80)
+            print("⚖️ PHASE 3: Disclaimer & Glossary (new_dis_glos)")
+            print("=" * 80)
+            
+            glossaires_path = os.path.join(CACHE_DIR, "glossaires.json")
+            try:
+                # The agent returns a full state dictionary, the report is in result["report"]
+                agent_state = dis_glos_agent.run(file_path, glossaires_path)
+                if agent_state and "report" in agent_state:
+                    dis_glos_result = agent_state["report"]
+                else:
+                    dis_glos_result = {"error": "Agent execution failed or no report generated"}
+            except Exception as e:
+                print(f" ❌ Disclaimer agent failed: {e}")
+                dis_glos_result = {"error": str(e)}
+        elif not file.filename.lower().endswith(".pptx"):
+            print(" ℹ️ Skipping phase 3 (only available for PPTX)")
+        else:
+            print(" ⚠️ DisGlosAgent not available")
+
+        # ========================================
+        # 6. Merge Results
         # ========================================
         combined_result = {
             "file_name": structural_result.get("file_name", file.filename),
@@ -237,6 +270,7 @@ async def analyze_file(
             "metrics": structural_result.get("metrics", {}),
             "doc_structure": structural_result.get("doc_structure", {}),
             "contextual_analysis": contextual_result,
+            "disclaimer_analysis": dis_glos_result,
         }
 
         print("\n" + "=" * 80)

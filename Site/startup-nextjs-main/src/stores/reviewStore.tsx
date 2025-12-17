@@ -7,8 +7,7 @@ export type ReviewScope =
   | "Contexte"
   | "Fonds"
   | "Disclaimers"
-  | "Prospectus"
-  | "Registration";
+  | "Glossaires";
 
 export type Violation = {
   id: string;
@@ -64,8 +63,7 @@ export const useReviewStore = create<ReviewState>((set) => ({
     Contexte: true,
     Fonds: true,
     Disclaimers: true,
-    Prospectus: true,
-    Registration: true,
+    Glossaires: true,
   },
   violations: [],
   docStructure: null,
