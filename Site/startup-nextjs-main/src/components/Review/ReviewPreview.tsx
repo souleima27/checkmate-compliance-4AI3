@@ -14,7 +14,13 @@ const Page = dynamic(() => import("react-pdf").then((mod) => mod.Page), { ssr: f
 import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 
-const API_URL = "http://localhost:8000";
+const getApiBaseUrl = (): string => {
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    return `http://${hostname}:8000`;
+  }
+  return "http://localhost:8000";
+};
 
 export default function ReviewPreview() {
   const router = useRouter();
@@ -40,6 +46,7 @@ export default function ReviewPreview() {
   const [loading, setLoading] = useState(false);
   const [pdfSource, setPdfSource] = useState<string | null>(null);
   const [downloading, setDownloading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // ✅ Configure worker only on client
   useEffect(() => {
@@ -63,6 +70,9 @@ export default function ReviewPreview() {
     }
 
     setLoading(true);
+    setError(null);
+
+    const API_URL = getApiBaseUrl();
 
     // Determine the URL: direct file or conversion endpoint
     // IMPORTANT: use percent encoding for filenames with spaces
@@ -75,7 +85,10 @@ export default function ReviewPreview() {
 
     fetch(url)
       .then((res) => {
-        if (!res.ok) throw new Error(`Fetch failed: ${res.statusText}`);
+        if (!res.ok) {
+          console.error(`[ReviewPreview] Fetch failed: ${res.status} ${res.statusText} for URL: ${url}`);
+          throw new Error(`Fetch failed: ${res.statusText}`);
+        }
         return res.blob();
       })
       .then((blob) => {
@@ -89,6 +102,7 @@ export default function ReviewPreview() {
       })
       .catch((err) => {
         console.error("Error fetching document blob:", err);
+        setError(err.message);
         setLoading(false);
       });
   }, [fileName, fileType]);
@@ -105,6 +119,7 @@ export default function ReviewPreview() {
 
   const handleDownloadAnnotated = async () => {
     if (!fileName) return;
+    const API_URL = getApiBaseUrl();
     try {
       setDownloading(true);
       const res = await fetch(`${API_URL}/api/download-annotated`, {
@@ -199,9 +214,10 @@ export default function ReviewPreview() {
         )}
 
         {/* Error State */}
-        {!pdfSource && !loading && (
+        {(!pdfSource && !loading) || error ? (
           <div className="flex flex-col items-center justify-center h-full text-red-500 gap-3">
             <p className="font-medium">Erreur lors du chargement de l'aperçu/conversion.</p>
+            {error && <p className="text-sm text-red-400">{error}</p>}
             <button
               onClick={() => window.location.reload()}
               className="px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 text-sm text-gray-700"
@@ -209,7 +225,7 @@ export default function ReviewPreview() {
               Réessayer
             </button>
           </div>
-        )}
+        ) : null}
 
         {/* PDF Viewer (Used for both PDF and Converted PPTX) */}
         {pdfSource && (

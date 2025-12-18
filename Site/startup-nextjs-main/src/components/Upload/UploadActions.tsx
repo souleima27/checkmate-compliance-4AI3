@@ -1,32 +1,69 @@
 "use client";
 
 import React, { useState } from "react";
-import { ScanSearch, Loader2 } from "lucide-react";
+import { ScanSearch, Loader2, CheckCircle2, Circle } from "lucide-react";
 import { useUploadStore } from "@/stores/uploadStore";
-import { analyzeDocument } from "@/services/api";
+import { analyzeDocument, auditDocuments } from "@/services/api";
 import { useReviewStore } from "@/stores/reviewStore";
 import { useRouter } from "next/navigation";
 
 export default function UploadActions() {
   // ✅ pull only metadata from store
-  const { marketingFile, metadata } = useUploadStore();
+  const { marketingFile, prospectusFile, metadata } = useUploadStore();
   const { startAnalysis, finishAnalysis } = useReviewStore();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [progressStep, setProgressStep] = useState<number>(0);
   const router = useRouter();
+
+  const steps = [
+    "Initialisation",
+    "Structure et contexte",
+    "Fond, glossaire et disclaimers",
+    "Système d'audit et assistant",
+    "Génération du rapport"
+  ];
 
   const handleAnalyze = async () => {
     if (!marketingFile) {
-      alert("Veuillez sélectionner un document marketing.");
+      alert("Veuillez sélectionner un document marketing (PPTX).");
       return;
     }
 
     setIsAnalyzing(true);
+    setProgressStep(0);
     startAnalysis();
 
     try {
-      // ✅ Pass metadata only to the API call
-      const result = await analyzeDocument(marketingFile, metadata);
+      // Step 1: Structural Analysis
+      // Step 1: Structure & Context (Started)
+      setProgressStep(1);
+
+      // We run analysis and audit in parallel, but conceptually we map them to steps
+      const analysisPromise = analyzeDocument(marketingFile, metadata).then(res => {
+        // When analysis finishes, Structure(1) and Fond/Glos(2) are done.
+        // We can move to Step 3 (Audit) if audit isn't done, or just mark progress.
+        setProgressStep(prev => Math.max(prev, 3));
+        return res;
+      });
+
+      let auditPromise = Promise.resolve(null);
+      if (prospectusFile) {
+        auditPromise = auditDocuments(marketingFile, prospectusFile).then(res => {
+          // When audit finishes, Step 3 (Audit) is done.
+          setProgressStep(prev => Math.max(prev, 4));
+          return res;
+        });
+      } else {
+        // If no prospectus, skip audit step visually
+        setProgressStep(prev => Math.max(prev, 4));
+      }
+
+      const [result, auditResult] = await Promise.all([analysisPromise, auditPromise]);
+
+      setProgressStep(4); // Generating report (Finalizing)
+
       console.log("Analysis Result:", result);
+      console.log("Audit Result:", auditResult);
 
       // 1. Update File Info in Store
       let serverFileName = result.file_name || result.filename || marketingFile.name;
@@ -275,12 +312,19 @@ export default function UploadActions() {
 
       const finalViolations = [...allViolations, ...disGlosViolations];
 
-      finishAnalysis(finalViolations, result.analysis?.doc_structure || result.doc_structure);
+      setProgressStep(3); // Finalizing
+
+      finishAnalysis(
+        finalViolations,
+        result.analysis?.doc_structure || result.doc_structure,
+        auditResult // ✅ Pass audit results
+      );
       router.push("/review");
     } catch (error) {
       console.error("Analysis error:", error);
       alert("Erreur lors de l'analyse");
       setIsAnalyzing(false);
+      setProgressStep(0);
     } finally {
       if (
         typeof document !== "undefined" &&
@@ -293,6 +337,28 @@ export default function UploadActions() {
 
   return (
     <div id="upload-actions" className="mt-12 text-center">
+      {isAnalyzing && (
+        <div className="mb-6 max-w-md mx-auto bg-white p-6 rounded-xl shadow-lg border border-green-100">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Analyse en cours...</h3>
+          <div className="space-y-4">
+            {steps.map((step, index) => (
+              <div key={index} className="flex items-center gap-3">
+                {index < progressStep ? (
+                  <CheckCircle2 className="text-green-600" size={20} />
+                ) : index === progressStep ? (
+                  <Loader2 className="animate-spin text-blue-600" size={20} />
+                ) : (
+                  <Circle className="text-gray-300" size={20} />
+                )}
+                <span className={`text-sm ${index === progressStep ? 'font-medium text-blue-700' : index < progressStep ? 'text-green-700' : 'text-gray-400'}`}>
+                  {step}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <button
         onClick={handleAnalyze}
         disabled={isAnalyzing || !marketingFile}
@@ -302,7 +368,7 @@ export default function UploadActions() {
           }`}
       >
         {isAnalyzing ? <Loader2 className="animate-spin" size={22} /> : <ScanSearch size={22} />}
-        {isAnalyzing ? "Analyse en cours..." : "Lancer l’analyse"}
+        {isAnalyzing ? "Traitement..." : "Lancer l’analyse"}
       </button>
     </div>
   );

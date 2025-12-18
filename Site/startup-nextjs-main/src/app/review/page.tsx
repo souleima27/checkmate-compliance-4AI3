@@ -6,11 +6,12 @@ import ReviewViolations from "@/components/Review/ReviewViolations";
 import ReviewReport from "@/components/Review/ReviewReport";
 import ReviewActions from "@/components/Review/ReviewActions";
 import ReviewChatbot from "@/components/Review/ReviewChatbot";
+import ReviewAlignment from "@/components/Review/ReviewAlignment";
 
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Analyse  | CheckMate",
+  title: "Analyse | CheckMate",
   // autres métadonnées si nécessaire
 };
 
@@ -28,6 +29,7 @@ export default function ReviewPage() {
           {/* Aperçu de la présentation */}
           <div className="lg:col-span-2">
             <ReviewPreview />
+            <ReviewAlignment />
             <ReviewMetrics />
             <ReviewViolations />
             <ReviewReport />

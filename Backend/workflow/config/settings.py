@@ -11,26 +11,23 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(BASE_DIR) # Backend/
 
-# Règles de conformité
-REGLES_CONTEXTUELLES_PATH = os.path.join(BASE_DIR, "caches", "regles_contextuelles.json")
-REGLES_STRUCTURELLES_PATH = os.path.join(BASE_DIR, "caches", "regles_structurelles.json")
-
-# Fichiers Excel de référence (A VERIFIER: S'ils sont nécessaires au runtime, ils doivent être présents)
-# Pour l'instant on garde les anciens chemins mais on conseille de les bouger dans un dossier data local
-# ou on pointe vers des placeholders si non critiques.
-GLOSSAIRE_DISCLAIMERS_PATH = os.path.join(BASE_DIR, "dataset", "GLOSSAIRE_DISCLAIMERS.xlsx") 
-REGISTRATION_ABROAD_PATH = os.path.join(BASE_DIR, "dataset", "Registration_abroad.xlsx")
-
-# Glossaires JSON
-GLOSSAIRES_JSON_PATH = os.path.join(BASE_DIR, "caches", "glossaires.json")
-
-# Documents de test
-TEST_DOCUMENT_PATH = os.path.join(BASE_DIR, "tests")
-
 # Dossiers de sortie
 OUTPUT_DIR = os.path.join(BASE_DIR, "output")
 LOGS_DIR = os.path.join(BASE_DIR, "logs")
 CACHE_DIR = os.path.join(BASE_DIR, "caches")
+
+# Règles de conformité
+REGLES_CONTEXTUELLES_PATH = os.path.join(CACHE_DIR, "regles_contextuelles.json")
+REGLES_STRUCTURELLES_PATH = os.path.join(CACHE_DIR, "regles_structurelles.json")
+
+# Fichiers de données (JSON)
+GLOSSAIRE_DISCLAIMERS_PATH = os.path.join(CACHE_DIR, "disclaimers.json")
+FOND_REGISTRED_PATH_JSON = os.path.join(CACHE_DIR, "fond_registred.json")
+GLOSSAIRES_JSON_PATH = os.path.join(CACHE_DIR, "glossaires.json")
+
+# Documents de test
+TEST_DOCUMENT_PATH = os.path.join(BASE_DIR, "tests")
+
 
 
 # ====================  API CONFIGURATION ====================
@@ -38,7 +35,7 @@ CACHE_DIR = os.path.join(BASE_DIR, "caches")
 # IMPORTANT: En production, utiliser des variables d'environnement
 # Pour l'instant, valeurs fixées dans le code comme demandé
 
-LLAMA_API_KEY = "sk-54aa2aca90034799817c91c16e83f3e2"
+LLAMA_API_KEY = "sk-8a120581d9a94a159282bfc98e7a7712"
 LLAMA_BASE_URL = "https://tokenfactory.esprit.tn/api"
 LLAMA_MODEL = "hosted_vllm/Llama-3.1-70B-Instruct"
 

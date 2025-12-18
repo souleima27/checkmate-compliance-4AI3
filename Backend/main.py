@@ -44,9 +44,30 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "workflow"))
 from workflow.doc_analyzer import DocumentComplianceAgent
 from workflow.theorist import TheoristAgent
 from workflow.new_dis_glos import OptimizedDisclaimerGlossaryAgent
+from workflow.checker_memory import DocumentAgentWithMemory
+from workflow.feedback_manager import FeedbackManager
+
+feedback_manager = FeedbackManager()
+
+class FeedbackModel(BaseModel):
+    type: str # "chatbot" | "violation"
+    id: str
+    feedback: str # "like" | "dislike"
+    details: Optional[dict] = {}
 
 
 app = FastAPI(title="Compliance Check API")
+
+@app.post("/api/feedback")
+async def submit_feedback(data: FeedbackModel):
+    """Submit user feedback."""
+    try:
+        entry = feedback_manager.add_feedback(data.dict())
+        return {"status": "success", "entry": entry}
+    except Exception as e:
+        raise HTTPException(500, f"Error saving feedback: {str(e)}")
+
+
 
 
 # Configure CORS (development mode)
@@ -65,6 +86,7 @@ METADATA_FILE = os.path.join(CACHE_DIR, "metadata.json")
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(CACHE_DIR, exist_ok=True)
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Serve uploaded files statically
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
@@ -75,6 +97,7 @@ print("⏳ Initializing AI Agents (loading models)...")
 doc_analyzer_agent = None
 theorist_agent = None
 dis_glos_agent = None
+checker_agent = None  # Global variable for the checker agent
 
 try:
     doc_analyzer_agent = DocumentComplianceAgent()
@@ -116,10 +139,12 @@ async def convert_file(filename: str):
         # This uses local LibreOffice or falls back (if implemented)
         pdf_path = convert_to_pdf(file_path, output_dir)
         return FileResponse(pdf_path, media_type="application/pdf")
+    except FileNotFoundError as e:
+        print(f"Conversion failed (File/Tool not found): {e}")
+        raise HTTPException(424, detail=f"Conversion tool not found: {str(e)}")
     except Exception as e:
         print(f"Conversion failed: {e}")
-        # Return error details to help debug
-        raise HTTPException(500, f"Conversion failed: {str(e)}")
+        raise HTTPException(500, detail=f"Conversion failed: {str(e)}")
 
 @app.post("/api/download-annotated")
 async def download_annotated(data: InjectionModel):
@@ -308,16 +333,82 @@ async def get_context():
     }
 
 
+@app.post("/api/audit")
+async def audit_documents(
+    pptx_file: UploadFile = File(...),
+    pdf_file: UploadFile = File(...)
+):
+    """
+    Endpoint to trigger the Checker Memory Agent.
+    Requires a PPTX and a PDF/DOCX file.
+    Returns audit findings and global metrics.
+    """
+    global checker_agent
+    
+    try:
+        # 1. Save uploaded files
+        pptx_path = os.path.join(UPLOAD_DIR, pptx_file.filename)
+        pdf_path = os.path.join(UPLOAD_DIR, pdf_file.filename)
+        
+        with open(pptx_path, "wb") as buffer:
+            shutil.copyfileobj(pptx_file.file, buffer)
+        with open(pdf_path, "wb") as buffer:
+            shutil.copyfileobj(pdf_file.file, buffer)
+            
+        print(f"📄 Files saved: {pptx_path}, {pdf_path}")
+        
+        # 2. Initialize Checker Agent
+        print("⏳ Initializing Checker Agent...")
+        checker_agent = DocumentAgentWithMemory(
+            pptx_path=pptx_path,
+            pdf_path=pdf_path,
+            questions_file=os.path.join(CACHE_DIR, "standard_questions.txt")
+        )
+        checker_agent.initialize()
+        
+        # 3. Run Audit
+        print("🔍 Running Audit...")
+        audit_results = checker_agent.run_audit()
+        
+        # 4. Generate Report (to get global metrics)
+        report_path = os.path.join(OUTPUT_DIR, "QnA", "audit", "audit_report.json")
+        os.makedirs(os.path.dirname(report_path), exist_ok=True)
+        report = checker_agent._generate_audit_report(report_path)
+        
+        return report
+
+    except Exception as e:
+        print(f"❌ Audit failed: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.post("/api/chat")
 async def chatbot_endpoint(request: Request):
+    global checker_agent
     data = await request.json()
 
     question = data.get("question")
-    ephemeral = data.get("ephemeral", {})
-    persistent = data.get("persistent", {})
-
+    
     if not question:
         raise HTTPException(status_code=400, detail="Missing question")
+
+    # Use Checker Agent if initialized
+    if checker_agent:
+        try:
+            print(f"🤖 Checker Agent answering: {question}")
+            response = checker_agent.answer_question(question)
+            return response
+        except Exception as e:
+            print(f"❌ Checker Agent failed to answer: {e}")
+            # Fallback to default logic below if needed, or raise error
+            # For now, let's try to fallback or just return error
+            pass
+
+    # Fallback Logic (Original)
+    ephemeral = data.get("ephemeral", {})
+    persistent = data.get("persistent", {})
 
     system_prompt = """
 Tu es un assistant de conformité STRICTEMENT RESTREINT AUX DONNÉES FOURNIES.

@@ -37,6 +37,7 @@ type ReviewState = {
   // Data
   violations: Violation[];
   docStructure: any; // Raw document structure from backend (useful for PPTX fallback)
+  auditResults: any; // Full audit report from checker_memory
 
   // UI State
   showAnnotations: boolean;
@@ -48,7 +49,7 @@ type ReviewState = {
   setFilterScopes: (scopes: ReviewScope[]) => void;
   setShowAnnotations: (show: boolean) => void;
   startAnalysis: () => void;
-  finishAnalysis: (violations: Violation[], docStructure?: any) => void;
+  finishAnalysis: (violations: Violation[], docStructure?: any, auditResults?: any) => void;
 };
 
 export const useReviewStore = create<ReviewState>((set) => ({
@@ -67,6 +68,7 @@ export const useReviewStore = create<ReviewState>((set) => ({
   },
   violations: [],
   docStructure: null,
+  auditResults: null,
   showAnnotations: false,
   filterScopes: [],
 
@@ -81,14 +83,15 @@ export const useReviewStore = create<ReviewState>((set) => ({
 
   setShowAnnotations: (show) => set({ showAnnotations: show }),
 
-  startAnalysis: () => set({ loading: true, analyzed: false, violations: [], docStructure: null }),
+  startAnalysis: () => set({ loading: true, analyzed: false, violations: [], docStructure: null, auditResults: null }),
 
-  finishAnalysis: (violations, docStructure = null) =>
+  finishAnalysis: (violations, docStructure = null, auditResults = null) =>
     set({
       loading: false,
       analyzed: true,
       violations,
       docStructure,
+      auditResults,
       showAnnotations: true,
       totalPages: docStructure?.total_slides || undefined,
     }),

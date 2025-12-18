@@ -2,7 +2,7 @@
 import { useReviewStore } from "@/stores/reviewStore";
 
 export default function ReviewMetrics() {
-  const { analyzed, violations } = useReviewStore();
+  const { analyzed, violations, auditResults } = useReviewStore();
 
   const counts = {
     Structure: violations.filter(v => v.scope === "Structure").length,
@@ -27,6 +27,13 @@ export default function ReviewMetrics() {
     { label: "Violations Disclaimers", value: counts.Disclaimers },
     { label: "Total violations", value: counts.Total },
   ];
+
+  if (auditResults && auditResults.global_metrics) {
+    const gm = auditResults.global_metrics;
+    metrics.push({ label: "Taux de Conformité", value: `${(gm.conformity_rate * 100).toFixed(1)}%` });
+    metrics.push({ label: "Similarité Moyenne", value: gm.avg_cosine_similarity?.toFixed(2) || "N/A" });
+    metrics.push({ label: "Recall@3 Moyen", value: gm.avg_recall_at_3?.toFixed(2) || "N/A" });
+  }
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">

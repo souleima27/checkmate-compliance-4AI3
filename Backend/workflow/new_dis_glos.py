@@ -52,10 +52,14 @@ except ImportError as e:
     sys.exit(1)
 
 # ==================== CONFIGURATION ====================
-CACHE_DIR = "workflow/caches"
-FOND_REGISTRED_PATH = os.path.join(CACHE_DIR, "fond_registred.json")
-DISCLAIMERS_PATH = os.path.join(CACHE_DIR, "disclaimers.json")
-GLOSSAIRES_PATH = os.path.join(CACHE_DIR, "glossaires.json")
+#CACHE_DIR = "git_pi/checkmate-compliance-4AI3/Backend/workflow"
+#FOND_REGISTRED_PATH = os.path.join(CACHE_DIR, "fond_registred.json")
+#DISCLAIMERS_PATH = os.path.join(CACHE_DIR, "disclaimers.json")
+#GLOSSAIRES_PATH = os.path.join(CACHE_DIR, "glossaires.json")
+
+FOND_REGISTRED_PATH = FOND_REGISTRED_PATH_JSON
+DISCLAIMERS_PATH = GLOSSAIRE_DISCLAIMERS_PATH
+GLOSSAIRES_PATH = GLOSSAIRES_JSON_PATH
 
 # ==================== IMPLEMENTATION LEVENSHTEIN FALLBACK ====================
 try:
@@ -2404,7 +2408,7 @@ def main():
     try:
         # Exemple d'utilisation - ajustez les chemins selon vos besoins
         pptx_path = "Batch 2/VERSION FINALE 6PG-GB-ODDO BHF Artificial Intelligence.pptx"
-        glossaires_json_path = "workflow/caches/glossaires.json"
+        glossaires_json_path = GLOSSAIRES_JSON_PATH
         
         result = agent.run(pptx_path, glossaires_json_path)
         

@@ -15,6 +15,9 @@ def get_soffice_path():
         candidates = [
             r"C:\Program Files\LibreOffice\program\soffice.exe",
             r"C:\Program Files (x86)\LibreOffice\program\soffice.exe",
+            # Add more potential paths if needed
+            os.path.expandvars(r"%PROGRAMFILES%\LibreOffice\program\soffice.exe"),
+            os.path.expandvars(r"%PROGRAMFILES(X86)%\LibreOffice\program\soffice.exe"),
         ]
         for c in candidates:
             if os.path.exists(c):
