@@ -1,33 +1,37 @@
 "use client";
 
-import { Download, CheckCircle } from "lucide-react";
+import { Download, CheckCircle, FileText, LayoutDashboard } from "lucide-react";
 import { useReviewStore } from "@/stores/reviewStore";
+import { useRouter } from "next/navigation";
+import { generatePDFReport } from "@/utils/pdfGenerator";
 
 export default function ReviewActions() {
-  const { analyzed } = useReviewStore();
+  const { analyzed, fileName, violations } = useReviewStore();
+  const router = useRouter();
 
   return (
     <div className="text-center my-10">
       <div className="flex items-center justify-center gap-4">
+
+
         <button
-          className="px-8 py-4 bg-green-700 text-white font-bold rounded-lg hover:bg-green-800 shadow flex items-center gap-3"
+          className="px-8 py-4 bg-green-700 text-white font-bold rounded-lg hover:bg-green-800 shadow flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={!analyzed}
           onClick={() => {
-            // Simuler téléchargement
-            alert("Téléchargement de la version annotée (simulation).");
+            if (!fileName) return;
+            generatePDFReport(fileName, violations);
           }}
         >
-          <Download size={20} /> Télécharger la version annotée
+          <FileText size={20} /> Télécharger Rapport
         </button>
 
         <button
           className="px-8 py-4 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 shadow flex items-center gap-3"
           onClick={() => {
-            // CTA secondaire (ex: poursuivre la revue, ou aller vers une page dédiée annotate)
-            alert("Continuer la revue (simulation).");
+            router.push('/dashboard');
           }}
         >
-          <CheckCircle size={20} /> Continuer la revue
+          <LayoutDashboard size={20} /> Tableau de bord
         </button>
       </div>
 

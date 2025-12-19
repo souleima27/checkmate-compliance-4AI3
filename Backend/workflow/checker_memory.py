@@ -156,7 +156,7 @@ class HybridRetriever:
     def __init__(self, model_name: str = 'paraphrase-multilingual-MiniLM-L12-v2'):
         self.bm25 = None
         self.vectorizer = CountVectorizer(stop_words='english')
-        self.embedding_model = SentenceTransformer(model_name)
+        self.embedding_model = SentenceTransformer(model_name, device="cpu")
         self.faiss_index = None
         self.chunks = []
         self.chunk_embeddings = []
@@ -232,7 +232,7 @@ class MetricsCalculator:
     
     def __init__(self):
         # Initialiser les modèles nécessaires
-        self.embedding_model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+        self.embedding_model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2', device="cpu")
     
     def calculate_bm25_score(self, query: str, document: str, retriever: HybridRetriever) -> float:
         """Calcule le score BM25 entre une requête et un document"""

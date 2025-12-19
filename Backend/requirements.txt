@@ -15,3 +15,13 @@ python-dotenv
 numpy
 scikit-learn
 python-levenshtein
+rank_bm25
+sentence_transformers
+langgraph
+langchain
+langchain_community
+pypdf
+python-docx
+faiss-cpu
+lxml
+

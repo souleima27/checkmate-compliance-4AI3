@@ -1,4 +1,7 @@
 import os
+# Force CPU usage to avoid CUDA OOM errors on small GPUs
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+
 import shutil
 import sys
 import json
@@ -288,6 +291,7 @@ async def analyze_file(
         # 6. Merge Results
         # ========================================
         combined_result = {
+            "version": "v1.0.1_debug_glossary",
             "file_name": structural_result.get("file_name", file.filename),
             "document_id": structural_result.get("document_id"),
             "timestamp": structural_result.get("timestamp"),

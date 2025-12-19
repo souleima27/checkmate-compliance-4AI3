@@ -35,7 +35,7 @@ TEST_DOCUMENT_PATH = os.path.join(BASE_DIR, "tests")
 # IMPORTANT: En production, utiliser des variables d'environnement
 # Pour l'instant, valeurs fixées dans le code comme demandé
 
-LLAMA_API_KEY = "YOUR_API_KEY"
+LLAMA_API_KEY = "sk-2eb8532dc2f041dfb51840501facebd1"
 LLAMA_BASE_URL = "https://tokenfactory.esprit.tn/api"
 LLAMA_MODEL = "hosted_vllm/Llama-3.1-70B-Instruct"
 

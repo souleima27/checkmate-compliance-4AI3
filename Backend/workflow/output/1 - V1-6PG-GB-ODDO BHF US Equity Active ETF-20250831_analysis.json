@@ -1,7 +1,7 @@
 {
-  "document_id": "doc_9747bdad",
+  "document_id": "doc_2cd59eb8",
   "file_name": "1 - V1-6PG-GB-ODDO BHF US Equity Active ETF-20250831.pptx",
-  "timestamp": "2025-12-12T16:44:13.128040",
+  "timestamp": "2025-12-18T21:41:49.555233",
   "metrics": {
     "compliance_score": 0.333,
     "completeness": 0.667,
@@ -20,7 +20,7 @@
     "elements_conformes": [
       {
         "element": "Mention du SRI",
-        "location": "Slide 1 - slide_1_shape_20_table",
+        "location": "Slide 1 - slide_1_shape_3",
         "regle_id": "RS2",
         "justification": "La mention du SRI est présente sur la même slide que le disclaimer associé"
       },
@@ -34,7 +34,7 @@
         "element": "Page de garde",
         "location": "Slide 1 - slide_1_shape_6",
         "regle_id": "RS4",
-        "justification": "La page de garde contient les informations obligatoires"
+        "justification": "La page de garde contient le nom du fonds, le mois et l'année, la mention 'document promotionnel' et la cible"
       }
     ],
     "elements_non_conformes": [
@@ -57,7 +57,7 @@
         "location": "",
         "regle_id": "RC33",
         "violation": "La mention des frais de gestion est absente",
-        "gravite": "haute"
+        "gravite": "moyenne"
       }
     ],
     "elements_manquants": [
@@ -75,17 +75,17 @@
       }
     ],
     "recommandations": [
-      "Ajouter les avertissements/disclaimers sur les risques en gras et avec la même police que le texte principal",
-      "Réorganiser la présentation des performances pour commencer par la présentation du fonds",
+      "Utiliser une police et une taille identiques pour les avertissements/disclaimers sur les risques et le texte principal",
+      "Commencer la présentation des performances par la présentation du fonds et non par les performances",
       "Ajouter la mention des frais de gestion",
-      "Ajouter le glossaire des termes techniques",
-      "Ajouter la mention légale de la SGP",
-      "Ajouter les caractéristiques détaillées du fonds"
+      "Inclure un glossaire des termes techniques en fin de présentation",
+      "Ajouter la mention légale de la SGP en fin de présentation",
+      "Inclure les caractéristiques détaillées du fonds en fin de présentation"
     ]
   },
   "doc_structure": {
     "type": "pptx",
-    "document_id": "doc_9747bdad",
+    "document_id": "doc_2cd59eb8",
     "file_name": "1 - V1-6PG-GB-ODDO BHF US Equity Active ETF-20250831.pptx",
     "total_slides": 6,
     "slides": [

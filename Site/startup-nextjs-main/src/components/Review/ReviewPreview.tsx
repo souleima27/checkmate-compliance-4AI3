@@ -1,10 +1,11 @@
 "use client";
 
 import { useReviewStore } from "@/stores/reviewStore";
-import { ChevronLeft, ChevronRight, Eye, EyeOff, Loader2, Upload, Download } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye, EyeOff, Loader2, Upload, Download, FileText } from "lucide-react";
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
+import { generatePDFReport } from "@/utils/pdfGenerator";
 
 // ✅ Dynamic imports to disable SSR for react-pdf (fixes DOMMatrix error)
 const Document = dynamic(() => import("react-pdf").then((mod) => mod.Document), { ssr: false });
@@ -47,6 +48,7 @@ export default function ReviewPreview() {
   const [pdfSource, setPdfSource] = useState<string | null>(null);
   const [downloading, setDownloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [docReady, setDocReady] = useState(false);
 
   // ✅ Configure worker only on client
   useEffect(() => {
@@ -71,6 +73,7 @@ export default function ReviewPreview() {
 
     setLoading(true);
     setError(null);
+    setDocReady(false);
 
     const API_URL = getApiBaseUrl();
 
@@ -115,6 +118,7 @@ export default function ReviewPreview() {
     // Keep fileType generally as is, but we are viewing it as a PDF
     setFile({ fileName: fileName || "", fileType: fileType, totalPages: numPages });
     setLoading(false);
+    setDocReady(true);
   }
 
   const handleDownloadAnnotated = async () => {
@@ -185,10 +189,23 @@ export default function ReviewPreview() {
           <button
             onClick={handleDownloadAnnotated}
             disabled={downloading}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 text-sm font-medium transition"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800 disabled:opacity-50 text-sm font-medium transition"
           >
             {downloading ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
             {downloading ? "Génération..." : "Télécharger avec Notes"}
+          </button>
+        )}
+
+        {/* Report Download Button */}
+        {analyzed && (
+          <button
+            onClick={() => {
+              if (!fileName) return;
+              generatePDFReport(fileName, violations);
+            }}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium transition"
+          >
+            <FileText size={16} /> Télécharger Rapport
           </button>
         )}
       </div>
@@ -238,7 +255,7 @@ export default function ReviewPreview() {
             error={<div className="text-red-500 mt-10">Erreur de rendu PDF</div>}
             className="flex justify-center"
           >
-            {totalPages > 0 && (
+            {docReady && totalPages > 0 && (
               <Page
                 key={`page_${currentPage}`} // Force re-render on page change to avoid stale state
                 pageNumber={currentPage}

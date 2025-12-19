@@ -55,7 +55,7 @@ type ReviewState = {
 export const useReviewStore = create<ReviewState>((set) => ({
   fileName: "document",
   fileType: "pdf",
-  totalPages: 1,
+  totalPages: 0,
   currentPage: 1,
   analyzed: false,
   loading: false,
@@ -83,7 +83,7 @@ export const useReviewStore = create<ReviewState>((set) => ({
 
   setShowAnnotations: (show) => set({ showAnnotations: show }),
 
-  startAnalysis: () => set({ loading: true, analyzed: false, violations: [], docStructure: null, auditResults: null }),
+  startAnalysis: () => set({ loading: true, analyzed: false, violations: [], docStructure: null, auditResults: null, totalPages: 0 }),
 
   finishAnalysis: (violations, docStructure = null, auditResults = null) =>
     set({

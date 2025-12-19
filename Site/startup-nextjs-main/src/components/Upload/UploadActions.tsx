@@ -62,7 +62,10 @@ export default function UploadActions() {
 
       setProgressStep(4); // Generating report (Finalizing)
 
-      console.log("Analysis Result:", result);
+      console.log("🚀 Analysis result received:", result);
+      if (result.version) {
+        console.log("🔔 Backend version:", result.version);
+      }
       console.log("Audit Result:", auditResult);
 
       // 1. Update File Info in Store

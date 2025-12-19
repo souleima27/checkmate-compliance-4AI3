@@ -32,5 +32,6 @@ const menuData: Menu[] = [
     path: "/dashboard",
     newTab: false,
   },
+
 ];
 export default menuData;

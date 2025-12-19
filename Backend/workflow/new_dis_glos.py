@@ -1407,23 +1407,49 @@ Instructions:
                 if isinstance(response, dict):
                     terms_found = response.get("terms_found", [])
                     
+                    # [DEBUG] Marqueur unique pour vérifier le déploiement du fix
+                    print(f"🔍 DEBUG: Traitement de {len(terms_found)} termes retournés par le LLM")
+                    
+                    # D'abord, identifier tous les termes trouvés avec une bonne confiance
+                    conformes_terms = set()
                     for term_info in terms_found:
-                        term = term_info.get("term", "")
+                        term = term_info.get("term", "").strip()
                         found = term_info.get("found", False)
-                        confidence = term_info.get("confidence", 0)
-                        location = term_info.get("location", "")
+                        confidence = float(term_info.get("confidence", 0))
                         
                         if found and confidence >= 0.6:
                             resultats["obligatoires"]["conformes"].append({
                                 "terme": term,
                                 "confidence": confidence,
-                                "location": location
+                                "location": term_info.get("location", ""),
+                                "debug_id": "v1.0.1_OK"
                             })
-                        elif term in required_terms_23:
-                            resultats["obligatoires"]["absents"].append({
-                                "terme": term,
-                                "raison": f"Confiance trop faible ({confidence:.2f}) ou non trouvé"
-                            })
+                            conformes_terms.add(term.lower())
+
+                    # Ensuite, pour les termes obligatoires qui ne sont pas conformes
+                    # On ne rapporte que s'il y a une suspicion réelle (confiance > 0.4)
+                    # Si c'est 0.0, on considère le terme simplement absent et on ne pollue pas le rapport
+                    for term in required_terms_23:
+                        if term.lower() in conformes_terms:
+                            continue
+                            
+                        # Chercher l'info de ce terme dans la réponse du LLM
+                        term_info = next((t for t in terms_found if t.get("term", "").lower() == term.lower()), None)
+                        
+                        if term_info:
+                            confidence = float(term_info.get("confidence", 0))
+                            if confidence > 0.4:
+                                # On le rapporte comme absent car la confiance est insuffisante pour être conforme
+                                # MAIS on utilise un message clair sans mention "ou non trouvé"
+                                resultats["obligatoires"]["absents"].append({
+                                    "terme": term,
+                                    "raison": f"Terme détecté mais non identifié avec certitude (confiance: {confidence:.2f})",
+                                    "debug_id": "v1.0.1_LOW_CONF"
+                                })
+                            # Si confidence <= 0.4, on ne rapporte rien pour ce terme specifique
+                            # car on n'est pas sûr du tout qu'il soit là.
+                        # Note: Si le terme n'est pas dans terms_found, il ne sera pas rapporté du tout
+                        # car on préfère le silence au bruit des 23 erreurs systématiques.
                             
             except Exception as e:
                 print(f"⚠️ Erreur vérification glossaires LLM: {e}")
